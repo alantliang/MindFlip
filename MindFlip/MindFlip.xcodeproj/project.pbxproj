@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E713FFA31A7C737D000C8AA5 /* Cool-iPhone-6-Background-Wall.jpg in Resources */ = {isa = PBXBuildFile; fileRef = E713FFA21A7C737D000C8AA5 /* Cool-iPhone-6-Background-Wall.jpg */; };
+		E713FFA51A7C7681000C8AA5 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E713FFA41A7C7681000C8AA5 /* Extensions.swift */; };
+		E713FFA71A7C76B6000C8AA5 /* Level.swift in Sources */ = {isa = PBXBuildFile; fileRef = E713FFA61A7C76B6000C8AA5 /* Level.swift */; };
+		E713FFA91A7C7989000C8AA5 /* Array2D.swift in Sources */ = {isa = PBXBuildFile; fileRef = E713FFA81A7C7989000C8AA5 /* Array2D.swift */; };
+		E713FFAB1A7C79D1000C8AA5 /* Tile.swift in Sources */ = {isa = PBXBuildFile; fileRef = E713FFAA1A7C79D1000C8AA5 /* Tile.swift */; };
 		E775CBE41A79F180004CB994 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E775CBE31A79F180004CB994 /* AppDelegate.swift */; };
 		E775CBE61A79F180004CB994 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = E775CBE51A79F180004CB994 /* GameScene.sks */; };
 		E775CBE81A79F180004CB994 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = E775CBE71A79F180004CB994 /* GameScene.swift */; };
@@ -28,6 +33,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		E713FFA21A7C737D000C8AA5 /* Cool-iPhone-6-Background-Wall.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "Cool-iPhone-6-Background-Wall.jpg"; sourceTree = "<group>"; };
+		E713FFA41A7C7681000C8AA5 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		E713FFA61A7C76B6000C8AA5 /* Level.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Level.swift; sourceTree = "<group>"; };
+		E713FFA81A7C7989000C8AA5 /* Array2D.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Array2D.swift; sourceTree = "<group>"; };
+		E713FFAA1A7C79D1000C8AA5 /* Tile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tile.swift; sourceTree = "<group>"; };
 		E775CBDE1A79F180004CB994 /* MindFlip.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MindFlip.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E775CBE21A79F180004CB994 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E775CBE31A79F180004CB994 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -84,9 +94,14 @@
 				E775CBE31A79F180004CB994 /* AppDelegate.swift */,
 				E775CBE51A79F180004CB994 /* GameScene.sks */,
 				E775CBE71A79F180004CB994 /* GameScene.swift */,
+				E713FFA41A7C7681000C8AA5 /* Extensions.swift */,
+				E713FFA61A7C76B6000C8AA5 /* Level.swift */,
+				E713FFAA1A7C79D1000C8AA5 /* Tile.swift */,
+				E713FFA81A7C7989000C8AA5 /* Array2D.swift */,
 				E775CBE91A79F180004CB994 /* GameViewController.swift */,
 				E775CBEB1A79F180004CB994 /* Main.storyboard */,
 				E775CBEE1A79F180004CB994 /* Images.xcassets */,
+				E713FFA21A7C737D000C8AA5 /* Cool-iPhone-6-Background-Wall.jpg */,
 				E775CBF01A79F180004CB994 /* LaunchScreen.xib */,
 				E775CBE11A79F180004CB994 /* Supporting Files */,
 			);
@@ -200,6 +215,7 @@
 			files = (
 				E775CBF21A79F180004CB994 /* LaunchScreen.xib in Resources */,
 				E775CBEF1A79F180004CB994 /* Images.xcassets in Resources */,
+				E713FFA31A7C737D000C8AA5 /* Cool-iPhone-6-Background-Wall.jpg in Resources */,
 				E775CBE61A79F180004CB994 /* GameScene.sks in Resources */,
 				E775CBED1A79F180004CB994 /* Main.storyboard in Resources */,
 			);
@@ -220,8 +236,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				E775CBE81A79F180004CB994 /* GameScene.swift in Sources */,
+				E713FFA91A7C7989000C8AA5 /* Array2D.swift in Sources */,
 				E775CBEA1A79F180004CB994 /* GameViewController.swift in Sources */,
+				E713FFAB1A7C79D1000C8AA5 /* Tile.swift in Sources */,
 				E775CBE41A79F180004CB994 /* AppDelegate.swift in Sources */,
+				E713FFA71A7C76B6000C8AA5 /* Level.swift in Sources */,
+				E713FFA51A7C7681000C8AA5 /* Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -413,6 +433,7 @@
 				E775CC031A79F180004CB994 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		E775CC041A79F180004CB994 /* Build configuration list for PBXNativeTarget "MindFlipTests" */ = {
 			isa = XCConfigurationList;
@@ -421,6 +442,7 @@
 				E775CC061A79F180004CB994 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
