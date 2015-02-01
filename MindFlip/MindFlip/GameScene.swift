@@ -3,11 +3,10 @@ import SpriteKit
 class GameScene: SKScene {
     var level: Level!
     
-    let TileWidth: CGFloat = 32.0
-    let TileHeight: CGFloat = 36.0
+    let TileWidth: CGFloat = 36.0 // 4.5 * 8. original was 32
+    let TileHeight: CGFloat = 40.5 // 4.5 * 9. original was 36
     
     let gameLayer = SKNode()
-    let cookiesLayer = SKNode()
     let tilesLayer = SKNode()
     
     required init?(coder aDecoder: NSCoder) {
@@ -30,18 +29,6 @@ class GameScene: SKScene {
         
         tilesLayer.position = layerPosition
         gameLayer.addChild(tilesLayer)
-        
-        cookiesLayer.position = layerPosition
-        gameLayer.addChild(cookiesLayer)
-    }
-    
-    func addSpritesForCookies(cookies: Set<Cookie>) {
-        for cookie in cookies {
-            let sprite = SKSpriteNode(imageNamed: cookie.cookieType.spriteName)
-            sprite.position = pointForColumn(cookie.column, row:cookie.row)
-            cookiesLayer.addChild(sprite)
-            cookie.sprite = sprite
-        }
     }
     
     func pointForColumn(column: Int, row: Int) -> CGPoint {

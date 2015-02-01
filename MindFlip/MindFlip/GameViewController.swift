@@ -33,15 +33,5 @@ class GameViewController: UIViewController {
         scene.level = level
         scene.addTiles()
         skView.presentScene(scene)
-        // beginGame()
-    }
-    
-    func beginGame() {
-        shuffle()
-    }
-    
-    func shuffle() {
-        let newCookies = level.shuffle()
-        scene.addSpritesForCookies(newCookies)
     }
 }
