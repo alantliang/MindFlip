@@ -1,3 +1,5 @@
+import Foundation
+
 extension Dictionary {
     static func loadJSONFromBundle(filename: String) -> Dictionary<String, AnyObject>? {
         if let path = NSBundle.mainBundle().pathForResource(filename, ofType: "json") {

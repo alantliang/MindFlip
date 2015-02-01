@@ -1,18 +1,13 @@
-//
-//  GameScene.swift
-//  MindFlip
-//
-//  Created by Alan Liang on 1/28/15.
-//  Copyright (c) 2015 fsa. All rights reserved.
-//
-
 import SpriteKit
 
 class GameScene: SKScene {
-    var TileWidth: CGFloat = 32.0
+    var level: Level!
+    
+    let TileWidth: CGFloat = 32.0
     let TileHeight: CGFloat = 36.0
     
     let gameLayer = SKNode()
+    let cookiesLayer = SKNode()
     let tilesLayer = SKNode()
     
     required init?(coder aDecoder: NSCoder) {
@@ -28,21 +23,31 @@ class GameScene: SKScene {
         addChild(background)
         
         addChild(gameLayer)
-        gameLayer.hidden = true
         
         let layerPosition = CGPoint(
             x: -TileWidth * CGFloat(NumColumns) / 2,
             y: -TileHeight * CGFloat(NumRows) / 2)
+        
         tilesLayer.position = layerPosition
         gameLayer.addChild(tilesLayer)
+        
+        cookiesLayer.position = layerPosition
+        gameLayer.addChild(cookiesLayer)
     }
     
-    override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
-        // do nothing right now
+    func addSpritesForCookies(cookies: Set<Cookie>) {
+        for cookie in cookies {
+            let sprite = SKSpriteNode(imageNamed: cookie.cookieType.spriteName)
+            sprite.position = pointForColumn(cookie.column, row:cookie.row)
+            cookiesLayer.addChild(sprite)
+            cookie.sprite = sprite
+        }
     }
-   
-    override func update(currentTime: CFTimeInterval) {
-        /* Called before each frame is rendered */
+    
+    func pointForColumn(column: Int, row: Int) -> CGPoint {
+        return CGPoint(
+            x: CGFloat(column)*TileWidth + TileWidth/2,
+            y: CGFloat(row)*TileHeight + TileHeight/2)
     }
     
     func addTiles() {

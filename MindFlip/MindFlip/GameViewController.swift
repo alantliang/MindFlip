@@ -1,16 +1,9 @@
-//
-//  GameViewController.swift
-//  MindFlip
-//
-//  Created by Alan Liang on 1/28/15.
-//  Copyright (c) 2015 fsa. All rights reserved.
-//
-
 import UIKit
 import SpriteKit
 
 class GameViewController: UIViewController {
     var scene: GameScene!
+    var level: Level!
     
     override func prefersStatusBarHidden() -> Bool {
         return true
@@ -36,7 +29,19 @@ class GameViewController: UIViewController {
         scene.scaleMode = .AspectFill
         
         // Present the scene.
-        skView.presentScene(scene)
+        level = Level(filename: "Level_0")
+        scene.level = level
         scene.addTiles()
+        skView.presentScene(scene)
+        // beginGame()
+    }
+    
+    func beginGame() {
+        shuffle()
+    }
+    
+    func shuffle() {
+        let newCookies = level.shuffle()
+        scene.addSpritesForCookies(newCookies)
     }
 }
