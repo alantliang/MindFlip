@@ -34,8 +34,11 @@ class GameScene: SKScene {
         gameLayer.addChild(tilesLayer)
         selectedColumn = nil
         selectedRow = nil
-        hero.position = layerPosition
+        hero.position = CGPoint(x: 0, y: 0)
+        hero.xScale = 0.4 * 0.7
+        hero.yScale = 0.5 * 0.7
         gameLayer.addChild(hero)
+        animateWalkDown()
     }
     
     override func didMoveToView(view: SKView) {
@@ -73,6 +76,18 @@ class GameScene: SKScene {
     
 //    override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
 //    }
+    
+    func animateWalkDown()
+    {
+        // how does this know to animate hero? Because of the name?
+        let hero_down_anim = SKAction.animateWithTextures([
+            SKTexture(imageNamed: "hero_01"),
+            SKTexture(imageNamed: "hero_02")
+            ], timePerFrame: 0.4)
+        
+        let run = SKAction.repeatActionForever(hero_down_anim)
+        hero.runAction(run, withKey: "running")
+    }
     
     override func touchesEnded(touches: NSSet, withEvent event: UIEvent) {
         let touch = touches.anyObject() as UITouch
