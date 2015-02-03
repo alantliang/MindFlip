@@ -16,6 +16,7 @@
 		E713FFB01A7D37CA000C8AA5 /* Level_0.json in Resources */ = {isa = PBXBuildFile; fileRef = E713FFAF1A7D37CA000C8AA5 /* Level_0.json */; };
 		E713FFB21A7D38CC000C8AA5 /* Grid.atlas in Resources */ = {isa = PBXBuildFile; fileRef = E713FFB11A7D38CC000C8AA5 /* Grid.atlas */; };
 		E713FFB41A7D3912000C8AA5 /* Sprites.atlas in Resources */ = {isa = PBXBuildFile; fileRef = E713FFB31A7D3912000C8AA5 /* Sprites.atlas */; };
+		E713FFB81A7DD96D000C8AA5 /* PokemonMysteryDungeonRedRescueTeamSheet4.gif in Resources */ = {isa = PBXBuildFile; fileRef = E713FFB71A7DD96D000C8AA5 /* PokemonMysteryDungeonRedRescueTeamSheet4.gif */; };
 		E775CBE41A79F180004CB994 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E775CBE31A79F180004CB994 /* AppDelegate.swift */; };
 		E775CBE61A79F180004CB994 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = E775CBE51A79F180004CB994 /* GameScene.sks */; };
 		E775CBE81A79F180004CB994 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = E775CBE71A79F180004CB994 /* GameScene.swift */; };
@@ -46,6 +47,7 @@
 		E713FFAF1A7D37CA000C8AA5 /* Level_0.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Level_0.json; sourceTree = "<group>"; };
 		E713FFB11A7D38CC000C8AA5 /* Grid.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = Grid.atlas; sourceTree = "<group>"; };
 		E713FFB31A7D3912000C8AA5 /* Sprites.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = Sprites.atlas; sourceTree = "<group>"; };
+		E713FFB71A7DD96D000C8AA5 /* PokemonMysteryDungeonRedRescueTeamSheet4.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = PokemonMysteryDungeonRedRescueTeamSheet4.gif; sourceTree = "<group>"; };
 		E775CBDE1A79F180004CB994 /* MindFlip.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MindFlip.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E775CBE21A79F180004CB994 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E775CBE31A79F180004CB994 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -121,6 +123,7 @@
 				E713FFB31A7D3912000C8AA5 /* Sprites.atlas */,
 				E713FFB11A7D38CC000C8AA5 /* Grid.atlas */,
 				E775CBEE1A79F180004CB994 /* Images.xcassets */,
+				E713FFB71A7DD96D000C8AA5 /* PokemonMysteryDungeonRedRescueTeamSheet4.gif */,
 				E713FFA21A7C737D000C8AA5 /* Cool-iPhone-6-Background-Wall.jpg */,
 				E775CBF01A79F180004CB994 /* LaunchScreen.xib */,
 				E775CBE11A79F180004CB994 /* Supporting Files */,
@@ -236,6 +239,7 @@
 				E775CBF21A79F180004CB994 /* LaunchScreen.xib in Resources */,
 				E713FFB01A7D37CA000C8AA5 /* Level_0.json in Resources */,
 				E713FFB41A7D3912000C8AA5 /* Sprites.atlas in Resources */,
+				E713FFB81A7DD96D000C8AA5 /* PokemonMysteryDungeonRedRescueTeamSheet4.gif in Resources */,
 				E775CBEF1A79F180004CB994 /* Images.xcassets in Resources */,
 				E713FFA31A7C737D000C8AA5 /* Cool-iPhone-6-Background-Wall.jpg in Resources */,
 				E713FFB21A7D38CC000C8AA5 /* Grid.atlas in Resources */,

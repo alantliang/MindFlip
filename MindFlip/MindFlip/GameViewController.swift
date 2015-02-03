@@ -33,5 +33,6 @@ class GameViewController: UIViewController {
         scene.level = level
         scene.addTiles()
         skView.presentScene(scene)
+        
     }
 }

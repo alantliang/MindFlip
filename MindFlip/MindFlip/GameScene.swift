@@ -2,6 +2,9 @@ import SpriteKit
 
 class GameScene: SKScene {
     var level: Level!
+    var selectedColumn: Int?
+    var selectedRow: Int?
+    var hero: SKSpriteNode! = SKSpriteNode(imageNamed: "person_00")
     
     let TileWidth: CGFloat = 36.0 // 4.5 * 8. original was 32
     let TileHeight: CGFloat = 40.5 // 4.5 * 9. original was 36
@@ -29,6 +32,14 @@ class GameScene: SKScene {
         
         tilesLayer.position = layerPosition
         gameLayer.addChild(tilesLayer)
+        selectedColumn = nil
+        selectedRow = nil
+        hero.position = layerPosition
+        gameLayer.addChild(hero)
+    }
+    
+    override func didMoveToView(view: SKView) {
+        println("Moved to gamescene view")
     }
     
     func pointForColumn(column: Int, row: Int) -> CGPoint {
@@ -37,15 +48,44 @@ class GameScene: SKScene {
             y: CGFloat(row)*TileHeight + TileHeight/2)
     }
     
+    func convertPoint(point: CGPoint) -> (success: Bool, column: Int, row: Int) {
+        if point.x >= 0 && point.x < CGFloat(NumColumns)*TileWidth &&
+            point.y >= 0 && point.y < CGFloat(NumRows)*TileHeight {
+                return (true, Int(point.x / TileWidth), Int(point.y / TileHeight))
+        } else {
+            return (false, 0, 0)  // invalid location
+        }
+    }
+    
     func addTiles() {
         for row in 0..<NumRows {
             for column in 0..<NumColumns {
                 if let tile = level.tileAtColumn(column, row: row) {
                     let tileNode = SKSpriteNode(imageNamed: "Tile")
                     tileNode.position = pointForColumn(column, row: row)
+                    tileNode.xScale = 1.125 // this changes the size of the image? Or does it change the model? should only be image
+                    tileNode.yScale = 1.125
                     tilesLayer.addChild(tileNode)
                 }
             }
         }
     }
+    
+//    override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
+//    }
+    
+    override func touchesEnded(touches: NSSet, withEvent event: UIEvent) {
+        let touch = touches.anyObject() as UITouch
+        let location = touch.locationInNode(tilesLayer)
+        let (success, column, row) = convertPoint(location)
+        if success {
+            selectedColumn = column
+            selectedRow = row
+            println("Column: \(selectedColumn), Row: \(selectedRow)")
+        }
+    }
+//
+//    override func touchesCancelled(touches: NSSet, withEvent event: UIEvent) {
+//        touchesEnded(touches, withEvent: event)
+//    }
 }
