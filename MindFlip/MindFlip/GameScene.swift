@@ -2,15 +2,16 @@ import SpriteKit
 
 class GameScene: SKScene {
     var level: Level!
-    var selectedColumn: Int?
-    var selectedRow: Int?
-    var hero: SKSpriteNode! = SKSpriteNode(imageNamed: "person_00")
+    var selectedColumn = 0
+    var selectedRow = 0
+    var hero: SKSpriteNode! = SKSpriteNode(imageNamed: "hero_front_00")
     
     let TileWidth: CGFloat = 36.0 // 4.5 * 8. original was 32
     let TileHeight: CGFloat = 40.5 // 4.5 * 9. original was 36
     
     let gameLayer = SKNode()
     let tilesLayer = SKNode()
+    let playerLayer = SKNode()
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder) is not used in this app")
@@ -32,13 +33,14 @@ class GameScene: SKScene {
         
         tilesLayer.position = layerPosition
         gameLayer.addChild(tilesLayer)
-        selectedColumn = nil
-        selectedRow = nil
+        playerLayer.position = layerPosition
+        gameLayer.addChild(playerLayer)
+        selectedColumn = 0
+        selectedRow = 0
         hero.position = CGPoint(x: 0, y: 0)
-        hero.xScale = 0.4 * 0.7
-        hero.yScale = 0.5 * 0.7
-        gameLayer.addChild(hero)
-        animateWalkDown()
+//        hero.xScale = 0.4 * 0.7
+//        hero.yScale = 0.5 * 0.7
+        playerLayer.addChild(hero)
     }
     
     override func didMoveToView(view: SKView) {
@@ -74,18 +76,52 @@ class GameScene: SKScene {
         }
     }
     
+    func moveHero(column: Int, row: Int) {
+        // moves hero to tile clicked. Later use A* to move to a particular location
+        hero.position = pointForColumn(column, row: row)
+    }
+    
 //    override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
 //    }
     
-    func animateWalkDown()
+    func animateWalk(direction: String)
     {
         // how does this know to animate hero? Because of the name?
         let hero_down_anim = SKAction.animateWithTextures([
-            SKTexture(imageNamed: "hero_01"),
-            SKTexture(imageNamed: "hero_02")
+            SKTexture(imageNamed: "hero_front_01"),
+            SKTexture(imageNamed: "hero_front_02")
+            ], timePerFrame: 0.4)
+
+        let hero_right_anim = SKAction.animateWithTextures([
+            SKTexture(imageNamed: "hero_right_01"),
+            SKTexture(imageNamed: "hero_right_02")
             ], timePerFrame: 0.4)
         
-        let run = SKAction.repeatActionForever(hero_down_anim)
+        let hero_left_anim = SKAction.animateWithTextures([
+            SKTexture(imageNamed: "hero_left_01"),
+            SKTexture(imageNamed: "hero_left_02")
+            ], timePerFrame: 0.4)
+        
+        let hero_up_anim = SKAction.animateWithTextures([
+            SKTexture(imageNamed: "hero_back_01"),
+            SKTexture(imageNamed: "hero_back_02")
+            ], timePerFrame: 0.4)
+        
+        var current_anim: SKAction?
+        switch direction {
+            case "DOWN":
+                current_anim = hero_down_anim
+            case "RIGHT":
+                current_anim = hero_right_anim
+            case "LEFT":
+                current_anim = hero_left_anim
+            case "UP":
+                current_anim = hero_up_anim
+            default:
+                println("\(direction) is not handled")
+        }
+        
+        let run = SKAction.repeatActionForever(current_anim!)
         hero.runAction(run, withKey: "running")
     }
     
@@ -94,9 +130,25 @@ class GameScene: SKScene {
         let location = touch.locationInNode(tilesLayer)
         let (success, column, row) = convertPoint(location)
         if success {
+            
+            println("Column: \(selectedColumn), Row: \(selectedRow)")
+            moveHero(column, row: row)
+            if column > selectedColumn {
+                animateWalk("RIGHT")
+            } else if row > selectedRow {
+                animateWalk("UP")
+            } else if column < selectedColumn {
+                animateWalk("LEFT")
+            } else if row < selectedRow {
+                animateWalk("DOWN")
+            } else {
+                hero.removeActionForKey("running")
+            }
+            
             selectedColumn = column
             selectedRow = row
-            println("Column: \(selectedColumn), Row: \(selectedRow)")
+//            hero.removeActionForKey("running")
+//            hero.texture = SKTexture(imageNamed: "hero_00")
         }
     }
 //
