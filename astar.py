@@ -9,8 +9,10 @@ like pacman. Design A-star algorithm for this structure.
 
 from ast import literal_eval
 
+
 class NodeNotFoundError(Exception):
     pass
+
 
 class Node(object):
     def __init__(self, x, y):

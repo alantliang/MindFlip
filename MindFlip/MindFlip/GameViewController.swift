@@ -19,6 +19,7 @@ class GameViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        println("GameViewController loaded")
         
         // Configure the view.
         let skView = view as SKView
