@@ -47,6 +47,14 @@ public class Graph {
         connectNodes()
     }
     
+    public func getCost(start: Node, end: Node) -> Int {
+        return abs(start.x - end.x) + abs(start.y - end.y)
+    }
+    
+    public func heuristicCostEstimate(start: Node, end: Node) -> Double {
+        return sqrt((Double(start.x) - Double(end.x))**2 + (Double(start.y) - Double(end.y))**2)
+    }
+    
     private func createNodes() {
         for x in Range(start: 0, end: width) {
             for y in Range(start: 0, end: height) {
@@ -69,7 +77,7 @@ public class Graph {
     
     private func getNode(x: Int, y: Int) -> Node {
         // returns node at a given x, y coordinate
-        var foundNode: Node!
+        var foundNode: Node!  // Is this the correct usage of forced unwrapping?
         for node in nodes {
             if node.x == x && node.y == y {
                 foundNode = node
@@ -86,28 +94,84 @@ public class Astar {
 //    graph - Graph object that contains our nodes with neighbors
 //    start - name (str) of a node that we are starting at
 //    goal - name (str) of the node that we want to reach
-//    
-//    WARNING: We use the name of the nodes as immutable indexes for dictionaries.
     
     var graph: Graph
-    let start: (Int, Int)
-    let goal: (Int, Int)
+    var start: Node
+    var goal: Node
     var closedSet: [Node]
     var openSet: [Node]
-    var cameFrom: Dictionary<Node, String>
+    var cameFrom: Dictionary<Node, Node>
     var costFromStart: Dictionary<Node, Int>
-    var heuristicCostFromStart: Dictionary<Node, Int>
+    var heuristicCostFromStart: Dictionary<Node, Double>
     
     init(graph: Graph, start: (Int, Int), goal: (Int, Int)) {
         self.graph = graph
-        self.start = start
-        self.goal = goal
-        closedSet = [graph.getNode(start.0, y: start.1)]
+        self.start = graph.getNode(start.0, y: start.1)
+        self.goal = graph.getNode(goal.0, y: goal.1)
+        closedSet = [self.start]  // do these need to be sets instead of lists?
         openSet = []
-        cameFrom = Dictionary<Node, String>()
+        cameFrom = Dictionary<Node, Node>()
         costFromStart = Dictionary<Node, Int>()
-        heuristicCostFromStart = Dictionary<Node, Int>()
+        heuristicCostFromStart = Dictionary<Node, Double>()
+        costFromStart[self.start] = 0
+        
     }
     
+    func run() -> [Node] {
+        while openSet.count > 0 {
+            var currentNode: Node = getMinHeuristicCostFromStartNode()
+            if currentNode == goal {
+                return reconstructPath()
+            } else {
+                // the happy path while the algo is running
+                let index: Int = find(openSet, currentNode)!
+                openSet.removeAtIndex(index)
+                closedSet.append(currentNode)
+                for neighbor in currentNode.neighbors {
+                    if contains(closedSet, neighbor) {
+                        continue
+                    } else {
+                        var cost = costFromStart[currentNode]! + graph.getCost(currentNode, end: neighbor)
+                        if find(openSet, neighbor) == nil || cost < costFromStart[neighbor] {
+                            cameFrom[neighbor] = currentNode
+                            costFromStart[neighbor] = cost
+                            heuristicCostFromStart[neighbor] = getHeuristicCostEstimate(neighbor, goal: goal)
+                            if find(openSet, neighbor) == nil {
+                                openSet.append(neighbor)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return []  // this is actually an error. How do we represent this?
+    }
     
+    func getMinHeuristicCostFromStartNode() -> Node {
+        var minHeuristicCost: Double = 99999.0  // arbitrary high number
+        var returnNode: Node!
+        
+        for node in openSet {
+            if heuristicCostFromStart[node] < minHeuristicCost {
+                minHeuristicCost = heuristicCostFromStart[node]!
+                returnNode = node
+            }
+        }
+        return returnNode
+    }
+    
+    func getHeuristicCostEstimate(start: Node, goal: Node) -> Double {
+        return Double(costFromStart[start]!) + graph.heuristicCostEstimate(start, end: goal)
+    }
+    
+    func reconstructPath() -> [Node] {
+        var current: Node = goal
+        var totalPath: [Node] = [current]
+        while find(cameFrom.keys, current) != nil {
+            current = cameFrom[current]!
+            totalPath.append(current)
+        }
+        totalPath.reverse()
+        return totalPath
+    }
 }
