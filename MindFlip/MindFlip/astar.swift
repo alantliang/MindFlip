@@ -8,11 +8,17 @@
 
 import Foundation
 
-public class Node {
+public class Node: Hashable {
     // the x and y values will not change after a node is initialized
     let x, y: Int
     var neighbors: [Node] = []
     var walkable = true
+    
+    public var hashValue : Int {
+        get {
+            return "\(self.x),\(self.y)".hashValue
+        }
+    }
     
     init(x: Int, y: Int) {
         self.x = x
@@ -22,6 +28,11 @@ public class Node {
     public func connect(nodes: [Node]) {
         neighbors.extend(nodes)
     }
+    
+}
+
+public func ==(lhs: Node, rhs: Node) -> Bool {
+    return lhs.hashValue == rhs.hashValue
 }
 
 public class Graph {
@@ -76,15 +87,27 @@ public class Astar {
 //    start - name (str) of a node that we are starting at
 //    goal - name (str) of the node that we want to reach
 //    
-//    WARNING: nodes used in this algorithms are names/references to nodes
-//    in the graph. They are not the same data type
+//    WARNING: We use the name of the nodes as immutable indexes for dictionaries.
+    
     var graph: Graph
     let start: (Int, Int)
     let goal: (Int, Int)
+    var closedSet: [Node]
+    var openSet: [Node]
+    var cameFrom: Dictionary<Node, String>
+    var costFromStart: Dictionary<Node, Int>
+    var heuristicCostFromStart: Dictionary<Node, Int>
     
     init(graph: Graph, start: (Int, Int), goal: (Int, Int)) {
         self.graph = graph
         self.start = start
         self.goal = goal
+        closedSet = [graph.getNode(start.0, y: start.1)]
+        openSet = []
+        cameFrom = Dictionary<Node, String>()
+        costFromStart = Dictionary<Node, Int>()
+        heuristicCostFromStart = Dictionary<Node, Int>()
     }
+    
+    
 }
