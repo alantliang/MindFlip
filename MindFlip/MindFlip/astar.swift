@@ -77,14 +77,16 @@ public class Graph {
     
     private func getNode(x: Int, y: Int) -> Node {
         // returns node at a given x, y coordinate
-        var foundNode: Node!  // Is this the correct usage of forced unwrapping?
+        var foundNode: Node! // Is this the correct usage of forced unwrapping?
+        var my_x = mod(x, self.width)  // allows character to move to the other side of the screen
+        var my_y = mod(y, self.height)
         for node in nodes {
-            if node.x == x && node.y == y {
+            if node.x == my_x && node.y == my_y {
                 foundNode = node
                 break
             }
         }
-        return foundNode!
+        return foundNode
     }
 }
 
@@ -98,23 +100,19 @@ public class Astar {
     var graph: Graph
     var start: Node
     var goal: Node
-    var closedSet: [Node]
-    var openSet: [Node]
-    var cameFrom: Dictionary<Node, Node>
-    var costFromStart: Dictionary<Node, Int>
-    var heuristicCostFromStart: Dictionary<Node, Double>
+    var closedSet: [Node] = [] // do we need sets instead of lists?
+    var openSet: [Node] = []
+    var cameFrom = Dictionary<Node, Node>()
+    var costFromStart = Dictionary<Node, Int>()
+    var heuristicCostFromStart = Dictionary<Node, Double>()
     
     init(graph: Graph, start: (Int, Int), goal: (Int, Int)) {
         self.graph = graph
         self.start = graph.getNode(start.0, y: start.1)
         self.goal = graph.getNode(goal.0, y: goal.1)
-        closedSet = [self.start]  // do these need to be sets instead of lists?
-        openSet = []
-        cameFrom = Dictionary<Node, Node>()
-        costFromStart = Dictionary<Node, Int>()
-        heuristicCostFromStart = Dictionary<Node, Double>()
+        openSet.append(self.start)
         costFromStart[self.start] = 0
-        
+        heuristicCostFromStart[self.start] = getHeuristicCostEstimate(self.start, goal: self.goal)
     }
     
     func run() -> [Node] {

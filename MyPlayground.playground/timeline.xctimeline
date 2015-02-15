@@ -2,5 +2,11 @@
 <Timeline
    version = "3.0">
    <TimelineItems>
+      <LoggerValueHistoryTimelineItem
+         documentLocation = "#CharacterRangeLen=0&amp;CharacterRangeLoc=2306&amp;EndingColumnNumber=29&amp;EndingLineNumber=83&amp;StartingColumnNumber=9&amp;StartingLineNumber=83&amp;Timestamp=445710596.428811">
+      </LoggerValueHistoryTimelineItem>
+      <LoggerValueHistoryTimelineItem
+         documentLocation = "file:///Users/Alan/Code/MindFlip/MyPlayground.playground#CharacterRangeLen=30&amp;CharacterRangeLoc=5402&amp;EndingLineNumber=161&amp;StartingLineNumber=161&amp;Timestamp=445711723.391847">
+      </LoggerValueHistoryTimelineItem>
    </TimelineItems>
 </Timeline>
