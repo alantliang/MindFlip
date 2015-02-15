@@ -90,7 +90,7 @@ public class Graph {
     }
 }
 
-public class Astar {
+public class AStar {
 //    A star algorithm with help from wikipedia.
 //    
 //    graph - Graph object that contains our nodes with neighbors
@@ -142,7 +142,7 @@ public class Astar {
                 }
             }
         }
-        return []  // this is actually an error. How do we represent this?
+        return []  // this is actually an error. How do we represent this? With optionals?
     }
     
     func getMinHeuristicCostFromStartNode() -> Node {
@@ -169,7 +169,7 @@ public class Astar {
             current = cameFrom[current]!
             totalPath.append(current)
         }
-        totalPath.reverse()
+        totalPath = totalPath.reverse()
         return totalPath
     }
 }
