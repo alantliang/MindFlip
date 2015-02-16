@@ -7,9 +7,11 @@ class GameScene: SKScene {
     var heroColumn = 0
     var heroRow = 0
     var hero: SKSpriteNode! = SKSpriteNode(imageNamed: "hero_front_00")
+
     
     let TileWidth: CGFloat = 36.0 // 4.5 * 8. original was 32
     let TileHeight: CGFloat = 40.5 // 4.5 * 9. original was 36
+    var selectedCell: SKSpriteNode! = SKSpriteNode(color: UIColor.greenColor(), size: CGSize(width: 36.0, height: 40.5))
     
     let gameLayer = SKNode()
     let tilesLayer = SKNode()
@@ -40,9 +42,13 @@ class GameScene: SKScene {
         selectedColumn = 0
         selectedRow = 0
         hero.position = CGPoint(x: 0, y: 0)
+        hero.zPosition = 100
 //        hero.xScale = 0.4 * 0.7
 //        hero.yScale = 0.5 * 0.7
         playerLayer.addChild(hero)
+        selectedCell.alpha = 0.3
+        selectedCell.zPosition = 90
+        playerLayer.addChild(selectedCell)
     }
     
     override func didMoveToView(view: SKView) {
@@ -109,6 +115,10 @@ class GameScene: SKScene {
         hero.runAction(SKAction.sequence(actions))
     }
     
+    func moveSelected(column: Int, row: Int) {
+        selectedCell.position = pointForColumn(column, row: row)
+    }
+    
 //    func animateWalkOne(goal: Node) {
 //        let goalPosition = pointForColumn(goal.x, row: goal.y)
 //        let move = SKAction.moveTo(goalPosition, duration: 0.3)
@@ -118,6 +128,34 @@ class GameScene: SKScene {
     
 //    override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
 //    }
+    
+    func drawCustomImage(size: CGSize) -> UIImage {
+        // Draw images in swift
+        // Setup our ocntext here
+        let bounds = CGRect(origin: CGPoint.zeroPoint, size: size)
+        let opaque = false
+        let scale: CGFloat = 0
+        UIGraphicsBeginImageContextWithOptions(size, opaque, scale)
+        let context = UIGraphicsGetCurrentContext()
+        
+        // Setup complete, do drawing here
+        CGContextSetStrokeColorWithColor(context, UIColor.redColor().CGColor)
+        CGContextSetLineWidth(context, 2.0)
+        
+        CGContextStrokeRect(context, bounds)
+        
+        CGContextBeginPath(context)
+        CGContextMoveToPoint(context, CGRectGetMinX(bounds), CGRectGetMinY(bounds))
+        CGContextAddLineToPoint(context, CGRectGetMaxX(bounds), CGRectGetMaxY(bounds))
+        CGContextMoveToPoint(context, CGRectGetMaxX(bounds), CGRectGetMinY(bounds))
+        CGContextAddLineToPoint(context, CGRectGetMinX(bounds), CGRectGetMaxY(bounds))
+        CGContextStrokePath(context)
+        
+        // Drawing complete, retrieve the finished image and cleanup
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return image
+    }
     
     func getWalk(start: (Int, Int), end: (Int, Int)) -> SKAction? {
         var action: SKAction?
@@ -181,6 +219,7 @@ class GameScene: SKScene {
         let location = touch.locationInNode(tilesLayer)
         let (success, column, row) = convertPoint(location)
         if success {
+            moveSelected(column, row: row)
             // println("Column: \(selectedColumn), Row: \(selectedRow)")
             moveHero(column, row: row)
             

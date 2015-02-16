@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MindFlip/GameScene.swift"
-            timestampString = "445751058.000983"
+            timestampString = "445803492.125129"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "135"
-            endingLineNumber = "135"
+            startingLineNumber = "173"
+            endingLineNumber = "173"
             landmarkName = "getWalk(_:end:)"
             landmarkType = "5">
          </BreakpointContent>
