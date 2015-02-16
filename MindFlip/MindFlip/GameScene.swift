@@ -4,6 +4,8 @@ class GameScene: SKScene {
     var level: Level!
     var selectedColumn = 0
     var selectedRow = 0
+    var heroColumn = 0
+    var heroRow = 0
     var hero: SKSpriteNode! = SKSpriteNode(imageNamed: "hero_front_00")
     
     let TileWidth: CGFloat = 36.0 // 4.5 * 8. original was 32
@@ -78,34 +80,82 @@ class GameScene: SKScene {
     
     func moveHero(column: Int, row: Int) {
         // moves hero to tile clicked. Later use A* to move to a particular location
-        hero.position = pointForColumn(column, row: row)
+        // hero.position = pointForColumn(column, row: row)
+        let start = (selectedColumn, selectedRow)
+        let goal = (column, row)
+        let bestPath = AStar(graph: Graph(width: NumColumns, height: NumRows), start: start, goal: goal).run()
+        var actions: [SKAction] = []
+        var prevColumn = heroColumn
+        var prevRow = heroRow
+        for (index, node) in enumerate(bestPath) {
+            if index == 0 {
+                continue
+            }
+            // move one space
+            var groupActions: [SKAction] = []
+            let goalPosition = pointForColumn(node.x, row: node.y)
+            if let walkDirection = getWalk((prevColumn, prevRow), end: (node.x, node.y)) {
+                groupActions.append(walkDirection)
+            }
+            let move = SKAction.moveTo(goalPosition, duration: 0.3)
+            // move.timingMode = .EaseOut
+            groupActions.append(move)
+            actions.append(SKAction.group(groupActions))
+            prevColumn = node.x
+            prevRow = node.y
+        }
+        heroColumn = goal.0
+        heroRow = goal.1
+        hero.runAction(SKAction.sequence(actions))
     }
+    
+//    func animateWalkOne(goal: Node) {
+//        let goalPosition = pointForColumn(goal.x, row: goal.y)
+//        let move = SKAction.moveTo(goalPosition, duration: 0.3)
+//        // move.timingMode = .Linear
+//        hero.runAction(move)
+//    }
     
 //    override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
 //    }
     
-    func animateWalk(direction: String)
-    {
+    func getWalk(start: (Int, Int), end: (Int, Int)) -> SKAction? {
+        var action: SKAction?
+        if end.0 > start.0 {
+            action = getAnimateWalk("RIGHT")
+        } else if end.1 > start.1 {
+            action = getAnimateWalk("UP")
+        } else if end.0 < start.0 {
+            action = getAnimateWalk("LEFT")
+        } else if end.1 < start.1 {
+            action = getAnimateWalk("DOWN")
+        } else {
+            // hero.removeActionForKey("running")
+        }
+        return action
+    }
+    
+    func getAnimateWalk(direction: String) -> SKAction {
         // how does this know to animate hero? Because of the name?
         let hero_down_anim = SKAction.animateWithTextures([
             SKTexture(imageNamed: "hero_front_01"),
             SKTexture(imageNamed: "hero_front_02")
-            ], timePerFrame: 0.4)
+            ], timePerFrame: 0.15)
 
         let hero_right_anim = SKAction.animateWithTextures([
             SKTexture(imageNamed: "hero_right_01"),
             SKTexture(imageNamed: "hero_right_02")
-            ], timePerFrame: 0.4)
+            ], timePerFrame: 0.15)
         
         let hero_left_anim = SKAction.animateWithTextures([
             SKTexture(imageNamed: "hero_left_01"),
             SKTexture(imageNamed: "hero_left_02")
-            ], timePerFrame: 0.4)
+            ], timePerFrame: 0.15)
         
         let hero_up_anim = SKAction.animateWithTextures([
             SKTexture(imageNamed: "hero_back_01"),
             SKTexture(imageNamed: "hero_back_02")
-            ], timePerFrame: 0.4)
+            ], timePerFrame: 0.15)
         
         var current_anim: SKAction?
         switch direction {
@@ -121,8 +171,9 @@ class GameScene: SKScene {
                 println("\(direction) is not handled")
         }
         
-        let run = SKAction.repeatActionForever(current_anim!)
-        hero.runAction(run, withKey: "running")
+        return SKAction.repeatAction(current_anim!, count: 1)
+        //let run = SKAction.repeatActionForever(current_anim!)
+        //hero.runAction(run, withKey: "running")
     }
     
     override func touchesEnded(touches: NSSet, withEvent event: UIEvent) {
@@ -130,20 +181,8 @@ class GameScene: SKScene {
         let location = touch.locationInNode(tilesLayer)
         let (success, column, row) = convertPoint(location)
         if success {
-            
-            println("Column: \(selectedColumn), Row: \(selectedRow)")
+            // println("Column: \(selectedColumn), Row: \(selectedRow)")
             moveHero(column, row: row)
-            if column > selectedColumn {
-                animateWalk("RIGHT")
-            } else if row > selectedRow {
-                animateWalk("UP")
-            } else if column < selectedColumn {
-                animateWalk("LEFT")
-            } else if row < selectedRow {
-                animateWalk("DOWN")
-            } else {
-                hero.removeActionForKey("running")
-            }
             
             selectedColumn = column
             selectedRow = row

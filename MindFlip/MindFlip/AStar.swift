@@ -29,6 +29,9 @@ public class Node: Hashable {
         neighbors.extend(nodes)
     }
     
+    public func getPoint() -> (Int, Int) {
+        return (x, y)
+    }
 }
 
 public func ==(lhs: Node, rhs: Node) -> Bool {
@@ -91,7 +94,7 @@ public class Graph {
 }
 
 public class AStar {
-//    A star algorithm with help from wikipedia.
+//    A-star algorithm with help from wikipedia.
 //    
 //    graph - Graph object that contains our nodes with neighbors
 //    start - name (str) of a node that we are starting at

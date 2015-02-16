@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 
 extension Dictionary {
     static func loadJSONFromBundle(filename: String) -> Dictionary<String, AnyObject>? {
@@ -24,5 +25,21 @@ extension Dictionary {
             println("Could not find level file: \(filename)")
             return nil
         }
+    }
+}
+
+extension UIImage {
+    func tint(color: UIColor, blendMode: CGBlendMode) -> UIImage
+    {
+        let drawRect = CGRectMake(0.0, 0.0, size.width, size.height)
+        UIGraphicsBeginImageContextWithOptions(size, false, scale)
+        let context = UIGraphicsGetCurrentContext()
+        CGContextClipToMask(context, drawRect, CGImage)
+        color.setFill()
+        UIRectFill(drawRect)
+        drawInRect(drawRect, blendMode: blendMode, alpha: 1.0)
+        let tintedImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return tintedImage
     }
 }
