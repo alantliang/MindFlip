@@ -89,7 +89,7 @@ class GameScene: SKScene {
         // hero.position = pointForColumn(column, row: row)
         let start = (selectedColumn, selectedRow)
         let goal = (column, row)
-        let bestPath = AStar(graph: Graph(width: NumColumns, height: NumRows), start: start, goal: goal).run()
+        let bestPath = AStar(graph: level.getGraph(), start: start, goal: goal).run()
         var actions: [SKAction] = []
         var prevColumn = heroColumn
         var prevRow = heroRow

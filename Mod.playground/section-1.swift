@@ -14,3 +14,9 @@ func mod(x: Int, m: Int) -> Int {
 }
 
 mod(-1, 2)
+
+var value = 1
+
+if value as Bool {
+    println("hi")
+}

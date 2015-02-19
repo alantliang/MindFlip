@@ -12,7 +12,7 @@ public class Node: Hashable {
     // the x and y values will not change after a node is initialized
     let x, y: Int
     var neighbors: [Node] = []
-    var walkable = true
+    var walkable: Bool
     
     public var hashValue : Int {
         get {
@@ -20,9 +20,10 @@ public class Node: Hashable {
         }
     }
     
-    init(x: Int, y: Int) {
+    init(x: Int, y: Int, walkable: Bool = true) {
         self.x = x
         self.y = y
+        self.walkable = walkable
     }
     
     public func connect(nodes: [Node]) {
@@ -43,6 +44,20 @@ public class Graph {
     var width: Int
     var height: Int
     
+    init(walkable: [[Int]]) {
+        // we are assuming a rectangular shape so we can take the first element's count as the width
+        self.width = walkable[0].count
+        self.height = walkable.count
+        for (row, rowArray) in enumerate(walkable) {
+            let tileRow = walkable.count - row - 1 // match the same cell ordering as tiles
+            for (column, value) in enumerate(rowArray) {
+                let walkableBool = (value == 1)
+                addNode(column, row: tileRow, walkable: walkableBool)
+            }
+        }
+        connectNodes()
+    }
+    
     init(width: Int, height: Int) {
         self.width = width
         self.height = height
@@ -56,6 +71,10 @@ public class Graph {
     
     public func heuristicCostEstimate(start: Node, end: Node) -> Double {
         return sqrt((Double(start.x) - Double(end.x))**2 + (Double(start.y) - Double(end.y))**2)
+    }
+    
+    private func addNode(column: Int, row: Int, walkable: Bool) {
+        nodes.append(Node(x: column, y: row, walkable: walkable))
     }
     
     private func createNodes() {
@@ -77,7 +96,7 @@ public class Graph {
                 // filter on walkable nodes
                 let allNodes = [upNode, rightNode, leftNode, downNode]
                 let connectedNodes = allNodes.filter { $0.walkable }
-                node.connect([upNode, rightNode, leftNode, downNode])
+                node.connect(connectedNodes)
             }
         }
     }
