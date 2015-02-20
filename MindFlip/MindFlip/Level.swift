@@ -13,10 +13,11 @@ class Level {
         if let dictionary = Dictionary<String, AnyObject>.loadJSONFromBundle(filename) {
             if let tilesArray: AnyObject = dictionary["tiles"] {
                 setupTiles(tilesArray)
-                setupGraph(tilesArray)
-            }
-            if let blocksArray: AnyObject = dictionary["obstacles"] {
-                setupObstacles(blocksArray)
+                if let blocksArray: AnyObject = dictionary["obstacles"] {
+                    setupObstacles(blocksArray)
+                    var walkable: [[Int]] = getWalkable(tilesArray, myObstacles: blocksArray)
+                    setupGraph(walkable)
+                }
             }
         }
     }
@@ -27,6 +28,10 @@ class Level {
     
     func getObstacles() -> Set<Obstacle> {
         return obstaclesSet
+    }
+    
+    func getWalkable(myTiles: AnyObject, myObstacles: AnyObject) -> [[Int]] {
+        return myTiles as [[Int]]
     }
     
     func setupTiles(tilesArray: AnyObject) {
