@@ -5,6 +5,8 @@ let NumRows = 8
 
 class Level {
     private var tiles = Array2D<Tile>(columns: NumColumns, rows: NumRows)
+    private var obstacles = Array2D<Obstacle>(columns: NumColumns, rows: NumRows)
+    private var obstaclesSet = Set<Obstacle>()
     private var graph: Graph!
     
     init(filename: String) {
@@ -13,11 +15,18 @@ class Level {
                 setupTiles(tilesArray)
                 setupGraph(tilesArray)
             }
+            if let blocksArray: AnyObject = dictionary["obstacles"] {
+                setupObstacles(blocksArray)
+            }
         }
     }
     
     func getGraph() -> Graph {
         return graph
+    }
+    
+    func getObstacles() -> Set<Obstacle> {
+        return obstaclesSet
     }
     
     func setupTiles(tilesArray: AnyObject) {
@@ -26,6 +35,19 @@ class Level {
             for (column, value) in enumerate(rowArray) {
                 if value == 1 {
                     tiles[column, tileRow] = Tile()
+                }
+            }
+        }
+    }
+    
+    func setupObstacles(obstaclesArray: AnyObject) {
+        for (row, rowArray) in enumerate(obstaclesArray as [[Int]]) {
+            let tileRow = NumRows - row - 1
+            for (column, value) in enumerate(rowArray) {
+                if value == 1 {
+                    let block = Block(column: column, row: row)
+                    obstacles[column, tileRow] = block
+                    obstaclesSet.addElement(block)
                 }
             }
         }

@@ -33,6 +33,7 @@ class GameViewController: UIViewController {
         level = Level(filename: "Level_0")
         scene.level = level
         scene.addTiles()
+        scene.addSpritesForObstacles(level.getObstacles())
         skView.presentScene(scene)
         
     }

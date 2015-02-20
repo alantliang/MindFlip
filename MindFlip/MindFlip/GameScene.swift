@@ -9,9 +9,9 @@ class GameScene: SKScene {
     var hero: SKSpriteNode! = SKSpriteNode(imageNamed: "hero_front_00")
 
     
-    let TileWidth: CGFloat = 36.0 // 4.5 * 8. original was 32
+    let TileWidth: CGFloat = 40.5 // 4.5 * 8. original was 32
     let TileHeight: CGFloat = 40.5 // 4.5 * 9. original was 36
-    var selectedCell: SKSpriteNode! = SKSpriteNode(color: UIColor.greenColor(), size: CGSize(width: 36.0, height: 40.5))
+    var selectedCell: SKSpriteNode! = SKSpriteNode(color: UIColor.greenColor(), size: CGSize(width: 40.5, height: 40.5))
     
     let gameLayer = SKNode()
     let tilesLayer = SKNode()
@@ -55,6 +55,17 @@ class GameScene: SKScene {
         println("Moved to gamescene view")
     }
     
+    func addSpritesForObstacles(obstacles: Set<Obstacle>) {
+        for obstacle in obstacles {
+            let sprite = SKSpriteNode(imageNamed: obstacle.obstacleType.spriteName)
+            sprite.position = pointForColumn(obstacle.column, row: obstacle.row)
+            sprite.size = CGSize(width: TileWidth, height: TileHeight)
+            playerLayer.addChild(sprite)
+            obstacle.sprite = sprite
+        }
+    }
+    
+    
     func pointForColumn(column: Int, row: Int) -> CGPoint {
         return CGPoint(
             x: CGFloat(column)*TileWidth + TileWidth/2,
@@ -76,8 +87,9 @@ class GameScene: SKScene {
                 if let tile = level.tileAtColumn(column, row: row) {
                     let tileNode = SKSpriteNode(imageNamed: "Tile")
                     tileNode.position = pointForColumn(column, row: row)
-                    tileNode.xScale = 1.125 // this changes the size of the image? Or does it change the model? should only be image
-                    tileNode.yScale = 1.125
+                    // tileNode.xScale = 1.125 // this changes the size of the image? Or does it change the model? should only be image
+                    tileNode.size = CGSize(width: TileWidth, height: TileHeight)
+                    // tileNode.yScale = 1.125
                     tilesLayer.addChild(tileNode)
                 }
             }
