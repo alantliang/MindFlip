@@ -35,7 +35,7 @@ class Level {
         var walkable: [[Int]] = emptyMatrix(NumRows, columns: NumColumns)
         for y in Range(start: 0, end: NumRows - 1) {
             for x in Range(start: 0, end: NumColumns - 1) {
-                if myTiles[y][x] == 1 || myObstacles[y][x] == 0 {
+                if myTiles[y][x] == 1 && myObstacles[y][x] == 0 {
                     walkable[y][x] = 1
                 } else {
                     walkable[y][x] = 0
