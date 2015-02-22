@@ -187,41 +187,41 @@ class GameScene: SKScene {
     
     func getAnimateWalk(direction: String) -> SKAction {
         // how does this know to animate hero? Because of the name?
-        let hero_down_anim = SKAction.animateWithTextures([
+        let heroDownAnim = SKAction.animateWithTextures([
             SKTexture(imageNamed: "hero_front_01"),
             SKTexture(imageNamed: "hero_front_02")
             ], timePerFrame: 0.15)
 
-        let hero_right_anim = SKAction.animateWithTextures([
+        let heroRightAnim = SKAction.animateWithTextures([
             SKTexture(imageNamed: "hero_right_01"),
             SKTexture(imageNamed: "hero_right_02")
             ], timePerFrame: 0.15)
         
-        let hero_left_anim = SKAction.animateWithTextures([
+        let heroLeftAnim = SKAction.animateWithTextures([
             SKTexture(imageNamed: "hero_left_01"),
             SKTexture(imageNamed: "hero_left_02")
             ], timePerFrame: 0.15)
         
-        let hero_up_anim = SKAction.animateWithTextures([
+        let heroUpAnim = SKAction.animateWithTextures([
             SKTexture(imageNamed: "hero_back_01"),
             SKTexture(imageNamed: "hero_back_02")
             ], timePerFrame: 0.15)
         
-        var current_anim: SKAction?
+        var currentAnim: SKAction?
         switch direction {
             case "DOWN":
-                current_anim = hero_down_anim
+                currentAnim = heroDownAnim
             case "RIGHT":
-                current_anim = hero_right_anim
+                currentAnim = heroRightAnim
             case "LEFT":
-                current_anim = hero_left_anim
+                currentAnim = heroLeftAnim
             case "UP":
-                current_anim = hero_up_anim
+                currentAnim = heroUpAnim
             default:
                 println("\(direction) is not handled")
         }
         
-        return SKAction.repeatAction(current_anim!, count: 1)
+        return SKAction.repeatAction(currentAnim!, count: 1)
         //let run = SKAction.repeatActionForever(current_anim!)
         //hero.runAction(run, withKey: "running")
     }

@@ -15,7 +15,7 @@ class Level {
                 setupTiles(tilesArray)
                 if let blocksArray: AnyObject = dictionary["obstacles"] {
                     setupObstacles(blocksArray)
-                    var walkable: [[Int]] = getWalkable(tilesArray, myObstacles: blocksArray)
+                    var walkable: [[Int]] = getWalkable(tilesArray as [[Int]], myObstacles: blocksArray as [[Int]])
                     setupGraph(walkable)
                 }
             }
@@ -30,8 +30,31 @@ class Level {
         return obstaclesSet
     }
     
-    func getWalkable(myTiles: AnyObject, myObstacles: AnyObject) -> [[Int]] {
-        return myTiles as [[Int]]
+    func getWalkable(myTiles: [[Int]], myObstacles: [[Int]]) -> [[Int]] {
+        // assuming height and width are same for both
+        var walkable: [[Int]] = emptyMatrix(NumRows, columns: NumColumns)
+        for y in Range(start: 0, end: NumRows - 1) {
+            for x in Range(start: 0, end: NumColumns - 1) {
+                if myTiles[y][x] == 1 || myObstacles[y][x] == 0 {
+                    walkable[y][x] = 1
+                } else {
+                    walkable[y][x] = 0
+                }
+            }
+        }
+        return walkable
+    }
+    
+    func emptyMatrix(rows: Int, columns: Int) -> [[Int]] {
+        // TODO(liang): currently returns 8 by 8. Learn how to intialize arrays in swift!
+        return [[0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0]]
     }
     
     func setupTiles(tilesArray: AnyObject) {
