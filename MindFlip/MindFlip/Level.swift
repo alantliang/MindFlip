@@ -8,6 +8,7 @@ class Level {
     private var obstacles = Array2D<Obstacle>(columns: NumColumns, rows: NumRows)
     private var obstaclesSet = Set<Obstacle>()
     private var graph: Graph!
+    private var startPosition: (Int, Int)!
     
     init(filename: String) {
         if let dictionary = Dictionary<String, AnyObject>.loadJSONFromBundle(filename) {
@@ -19,6 +20,11 @@ class Level {
                     setupGraph(walkable)
                 }
             }
+            if let startList: AnyObject = dictionary["starting"] {
+                println("Startlist exists")
+                let startList = startList as [Int]
+                startPosition = (startList[0], startList[1])
+            }
         }
     }
     
@@ -28,6 +34,10 @@ class Level {
     
     func getObstacles() -> Set<Obstacle> {
         return obstaclesSet
+    }
+    
+    func getStartPosition() -> (Int, Int)? {
+        return startPosition
     }
     
     func getWalkable(myTiles: [[Int]], myObstacles: [[Int]]) -> [[Int]] {
