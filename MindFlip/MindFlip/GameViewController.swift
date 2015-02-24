@@ -34,9 +34,7 @@ class GameViewController: UIViewController {
         scene.level = level
         scene.addTiles()
         scene.addSpritesForObstacles(level.getObstacles())
-        var start = scene.pointForColumn(level.getStartPosition()!.0, row: level.getStartPosition()!.1)
-        scene.hero.position = start
-        println("Starting position \(level.getStartPosition())")
+        scene.addHero()
         skView.presentScene(scene)
         
     }

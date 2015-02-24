@@ -28,6 +28,10 @@ class Level {
         }
     }
     
+    func isWalkable(column: Int, row: Int) -> Bool {
+        return graph.getNode(column, y: row).walkable
+    }
+    
     func getGraph() -> Graph {
         return graph
     }

@@ -101,7 +101,7 @@ public class Graph {
         }
     }
     
-    private func getNode(x: Int, y: Int) -> Node {
+    func getNode(x: Int, y: Int) -> Node {
         // returns node at a given x, y coordinate
         var foundNode: Node! // Is this the correct usage of forced unwrapping?
         var my_x = mod(x, self.width)  // allows character to move to the other side of the screen

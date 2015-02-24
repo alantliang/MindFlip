@@ -2,12 +2,12 @@ import SpriteKit
 
 class GameScene: SKScene {
     var level: Level!
-    var selectedColumn = 0
-    var selectedRow = 0
-    var heroColumn = 0
-    var heroRow = 0
+    var heroColumn: Int!
+    var heroRow: Int!
     var hero: SKSpriteNode! = SKSpriteNode(imageNamed: "hero_front_00")
-
+    
+    var initialTouch: (Int, Int)?
+    // var selectedGoal: (Int, Int)?
     
     let TileWidth: CGFloat = 40.5 // 4.5 * 8. original was 32
     let TileHeight: CGFloat = 40.5 // 4.5 * 9. original was 36
@@ -39,8 +39,6 @@ class GameScene: SKScene {
         gameLayer.addChild(tilesLayer)
         playerLayer.position = layerPosition
         gameLayer.addChild(playerLayer)
-        selectedColumn = 0
-        selectedRow = 0
         hero.position = CGPoint(x: 0, y: 0)
         hero.zPosition = 100
 //        hero.xScale = 0.4 * 0.7
@@ -96,35 +94,50 @@ class GameScene: SKScene {
         }
     }
     
+    func addHero() {
+        let start = level.getStartPosition()!
+        heroColumn = start.0
+        heroRow = start.1
+        var startPosition = pointForColumn(start.0, row: start.1)
+        hero.position = startPosition
+        println("Starting position \(level.getStartPosition())")
+    }
+    
     func moveHero(column: Int, row: Int) {
         // moves hero to tile clicked. Later use A* to move to a particular location
         // hero.position = pointForColumn(column, row: row)
-        let start = (selectedColumn, selectedRow)
-        let goal = (column, row)
-        let bestPath = AStar(graph: level.getGraph(), start: start, goal: goal).run()
-        var actions: [SKAction] = []
-        var prevColumn = heroColumn
-        var prevRow = heroRow
-        for (index, node) in enumerate(bestPath) {
-            if index == 0 {
-                continue
+        
+        let (success, startColumn, startRow) = convertPoint(hero.position)
+        if success {
+            let start = (startColumn, startRow)
+            let goal = (column, row)
+            let bestPath = AStar(graph: level.getGraph(), start: start, goal: goal).run()
+            var actions: [SKAction] = []
+            var prevColumn = heroColumn
+            var prevRow = heroRow
+            for (index, node) in enumerate(bestPath) {
+                if index == 0 {
+                    continue
+                }
+                // move one space
+                var groupActions: [SKAction] = []
+                let goalPosition = pointForColumn(node.x, row: node.y)
+                if let walkDirection = getWalk((prevColumn, prevRow), end: (node.x, node.y)) {
+                    groupActions.append(walkDirection)
+                }
+                let move = SKAction.moveTo(goalPosition, duration: 0.3)
+                // move.timingMode = .EaseOut
+                groupActions.append(move)
+                actions.append(SKAction.group(groupActions))
+                prevColumn = node.x
+                prevRow = node.y
             }
-            // move one space
-            var groupActions: [SKAction] = []
-            let goalPosition = pointForColumn(node.x, row: node.y)
-            if let walkDirection = getWalk((prevColumn, prevRow), end: (node.x, node.y)) {
-                groupActions.append(walkDirection)
-            }
-            let move = SKAction.moveTo(goalPosition, duration: 0.3)
-            // move.timingMode = .EaseOut
-            groupActions.append(move)
-            actions.append(SKAction.group(groupActions))
-            prevColumn = node.x
-            prevRow = node.y
+            heroColumn = goal.0
+            heroRow = goal.1
+            hero.runAction(SKAction.sequence(actions), completion: {
+                    self.userInteractionEnabled = true
+                    println("Set userInteractionEnabled to true")})
         }
-        heroColumn = goal.0
-        heroRow = goal.1
-        hero.runAction(SKAction.sequence(actions))
     }
     
     func moveSelected(column: Int, row: Int) {
@@ -226,20 +239,50 @@ class GameScene: SKScene {
         //hero.runAction(run, withKey: "running")
     }
     
+    override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
+        let touch = touches.anyObject() as UITouch
+        let location = touch.locationInNode(tilesLayer)
+        let (success, column, row) = convertPoint(location)
+        if success {
+            // Later can handle if initial touch is not in tilesLayer
+            initialTouch = (column, row)
+        }
+    }
+    
     override func touchesEnded(touches: NSSet, withEvent event: UIEvent) {
         let touch = touches.anyObject() as UITouch
         let location = touch.locationInNode(tilesLayer)
         let (success, column, row) = convertPoint(location)
         if success {
-            moveSelected(column, row: row)
+            if isSwipe() {
+                flip()
+            } else if level.isWalkable(column, row: row) && isAStar() {
+                self.userInteractionEnabled = false
+                println("Set userInteractionEnabled to false")
+                moveSelected(column, row: row)
+                moveHero(column, row: row)
+            }
+
             // println("Column: \(selectedColumn), Row: \(selectedRow)")
-            moveHero(column, row: row)
+
             
-            selectedColumn = column
-            selectedRow = row
+            // selectedColumn = column
+            // selectedRow = row
 //            hero.removeActionForKey("running")
 //            hero.texture = SKTexture(imageNamed: "hero_00")
         }
+    }
+    
+    func flip() {
+        return
+    }
+    
+    func isSwipe() -> Bool {
+        return false
+    }
+    
+    func isAStar() -> Bool {
+        return true
     }
 //
 //    override func touchesCancelled(touches: NSSet, withEvent event: UIEvent) {
