@@ -281,6 +281,44 @@ class GameScene: SKScene {
     
     func flip() {
         println("Flip baby")
+        let direction = CGVector(dx: endPoint!.x - initialPoint!.x, dy: endPoint!.y - initialPoint!.y)
+        let angle = atan2(direction.dy, direction.dx)
+        var deg = Double(angle * CGFloat(180.0 / M_PI))
+        let delta: Double = 45.0/2 // each direction is 45 degrees. Give additional half of that as margin for error
+        if (deg >= 0) {
+            // we are flipping up
+            if (0.0 + delta > deg) {
+                println("right")
+            } else if (45.0 + delta >= deg && deg >= 45 - delta) {
+                println("up-right")
+            } else if (90 + delta > deg && deg > 90 - delta) {
+                println("up")
+            } else if (135 + delta >= deg && deg >= 135 - delta) {
+                println("up-left")
+            } else if (180 >= deg && deg > 180 - delta) {
+                println("left")
+            } else {
+                println("Did not expect to get here: \(deg)")
+            }
+        } else {
+            let absDeg: Double = abs(deg)
+            // we are going down
+            if (0.0 + delta > absDeg) {
+                println("right")
+            } else if (45.0 + delta >= absDeg && absDeg >= 45 - delta) {
+                println("down-right")
+            } else if (90 + delta > absDeg && absDeg > 90 - delta) {
+                println("down")
+            } else if (135 + delta >= absDeg && absDeg >= 135 - delta) {
+                println("down-left")
+            } else if (180 >= absDeg && absDeg > 180 - delta) {
+                println("left")
+            } else {
+                println("Did not expect to get here: \(deg)")
+            }
+        }
+        
+        println("Degrees: \(deg)")
         return
     }
     
