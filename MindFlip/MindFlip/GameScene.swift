@@ -6,7 +6,10 @@ class GameScene: SKScene {
     var heroRow: Int!
     var hero: SKSpriteNode! = SKSpriteNode(imageNamed: "hero_front_00")
     
-    var initialTouch: (Int, Int)?
+    var initialCell: (Int, Int)?
+    var endCell: (Int, Int)?
+    var initialPoint: CGPoint?
+    var endPoint: CGPoint?
     // var selectedGoal: (Int, Int)?
     
     let TileWidth: CGFloat = 40.5 // 4.5 * 8. original was 32
@@ -95,18 +98,17 @@ class GameScene: SKScene {
     }
     
     func addHero() {
+        // currently is adding hero and adding selected cell
         let start = level.getStartPosition()!
         heroColumn = start.0
         heroRow = start.1
         var startPosition = pointForColumn(start.0, row: start.1)
         hero.position = startPosition
+        selectedCell.position = startPosition
         println("Starting position \(level.getStartPosition())")
     }
     
     func moveHero(column: Int, row: Int) {
-        // moves hero to tile clicked. Later use A* to move to a particular location
-        // hero.position = pointForColumn(column, row: row)
-        
         let (success, startColumn, startRow) = convertPoint(hero.position)
         if success {
             let start = (startColumn, startRow)
@@ -235,32 +237,36 @@ class GameScene: SKScene {
         }
         
         return SKAction.repeatAction(currentAnim!, count: 1)
-        //let run = SKAction.repeatActionForever(current_anim!)
-        //hero.runAction(run, withKey: "running")
     }
     
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
         let touch = touches.anyObject() as UITouch
         let location = touch.locationInNode(tilesLayer)
+        println("Touched: \(location.x), \(location.y)")
+        initialPoint = location
         let (success, column, row) = convertPoint(location)
         if success {
             // Later can handle if initial touch is not in tilesLayer
-            initialTouch = (column, row)
+            initialCell = (column, row)
         }
     }
     
     override func touchesEnded(touches: NSSet, withEvent event: UIEvent) {
         let touch = touches.anyObject() as UITouch
         let location = touch.locationInNode(tilesLayer)
+        endPoint = location
         let (success, column, row) = convertPoint(location)
         if success {
+            endCell = (column, row)
             if isSwipe() {
                 flip()
-            } else if level.isWalkable(column, row: row) && isAStar() {
-                self.userInteractionEnabled = false
-                println("Set userInteractionEnabled to false")
-                moveSelected(column, row: row)
-                moveHero(column, row: row)
+            } else if isMove(column, row: row) {
+                if level.isWalkable(column, row: row) && isAStar() {
+                    self.userInteractionEnabled = false
+                    println("Set userInteractionEnabled to false")
+                    moveSelected(column, row: row)
+                    moveHero(column, row: row)
+                }
             }
 
             // println("Column: \(selectedColumn), Row: \(selectedRow)")
@@ -274,16 +280,24 @@ class GameScene: SKScene {
     }
     
     func flip() {
+        println("Flip baby")
         return
     }
     
     func isSwipe() -> Bool {
-        return false
+        // this assumes a swipe happens always inside the tilelayer currently
+        return !(endCell?.0 == initialCell?.0 && endCell?.1 == initialCell?.1)
     }
     
     func isAStar() -> Bool {
         return true
     }
+    
+    func isMove(column: Int, row: Int) -> Bool {
+        return (column == initialCell?.0) && (row == initialCell?.1) && !((column == heroColumn) && (row == heroRow))
+    }
+        
+    
 //
 //    override func touchesCancelled(touches: NSSet, withEvent event: UIEvent) {
 //        touchesEnded(touches, withEvent: event)
