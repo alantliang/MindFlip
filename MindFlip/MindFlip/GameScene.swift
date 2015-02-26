@@ -322,6 +322,13 @@ class GameScene: SKScene {
         return
     }
     
+    func flipHorizontal() {
+        // for obstacle in obstacle:
+        // if obstacle above line, flip below + 2x distance from middle line
+        // if obstacle below line, flip up
+        return
+    }
+    
     func isSwipe() -> Bool {
         // this assumes a swipe happens always inside the tilelayer currently
         return !(endCell?.0 == initialCell?.0 && endCell?.1 == initialCell?.1)
