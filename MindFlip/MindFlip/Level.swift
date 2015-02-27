@@ -1,3 +1,6 @@
+// Contains Model information about our level
+// obstacles Currently contains the state of all our objects including the hero and all obstacles he/she will face.
+
 import Foundation
 
 let NumColumns = 8
@@ -7,6 +10,7 @@ class Level {
     private var tiles = Array2D<Tile>(columns: NumColumns, rows: NumRows)
     private var obstacles = Array2D<Obstacle>(columns: NumColumns, rows: NumRows)
     private var obstaclesSet = Set<Obstacle>()
+    private var hero: Hero!
     private var graph: Graph!
     private var startPosition: (Int, Int)!
     
@@ -16,20 +20,27 @@ class Level {
                 setupTiles(tilesArray)
                 if let blocksArray: AnyObject = dictionary["obstacles"] {
                     setupObstacles(blocksArray)
-                    var walkable: [[Int]] = getWalkable(tilesArray as [[Int]], myObstacles: blocksArray as [[Int]])
-                    setupGraph(walkable)
                 }
             }
             if let startList: AnyObject = dictionary["starting"] {
                 println("Startlist exists")
                 let startList = startList as [Int]
                 startPosition = (startList[0], startList[1])
+                hero = Hero(column: startList[0], row: startList[1])
+                obstacles[startList[0], startList[1]] = hero
+                obstaclesSet.addElement(hero) // why do we use obstaclesSet? faster lookup?
             }
         }
+        var walkable: [[Int]] = getWalkable()
+        setupGraph(walkable)
     }
     
     func isWalkable(column: Int, row: Int) -> Bool {
         return graph.getNode(column, y: row).walkable
+    }
+    
+    func getHero() -> Hero {
+        return hero
     }
     
     func getGraph() -> Graph {
@@ -44,12 +55,12 @@ class Level {
         return startPosition
     }
     
-    func getWalkable(myTiles: [[Int]], myObstacles: [[Int]]) -> [[Int]] {
+    func getWalkable() -> [[Int]] {
         // assuming height and width are same for both
         var walkable: [[Int]] = emptyMatrix(NumRows, columns: NumColumns)
         for y in Range(start: 0, end: NumRows - 1) {
             for x in Range(start: 0, end: NumColumns - 1) {
-                if myTiles[y][x] == 1 && myObstacles[y][x] == 0 {
+                if [y][x] == 1 && myObstacles[y][x] == 0 {
                     walkable[y][x] = 1
                 } else {
                     walkable[y][x] = 0
@@ -59,7 +70,7 @@ class Level {
         return walkable
     }
     
-    func emptyMatrix(rows: Int, columns: Int) -> [[Int]] {
+    private func emptyMatrix(rows: Int, columns: Int) -> [[Int]] {
         // TODO(liang): currently returns 8 by 8. Learn how to intialize arrays in swift!
         return [[0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0],
@@ -71,7 +82,7 @@ class Level {
             [0, 0, 0, 0, 0, 0, 0, 0]]
     }
     
-    func setupTiles(tilesArray: AnyObject) {
+    private func setupTiles(tilesArray: AnyObject) {
         for (row, rowArray) in enumerate(tilesArray as [[Int]]) {
             let tileRow = NumRows - row - 1
             for (column, value) in enumerate(rowArray) {
@@ -82,20 +93,21 @@ class Level {
         }
     }
     
-    func setupObstacles(obstaclesArray: AnyObject) {
+    private func setupObstacles(obstaclesArray: AnyObject) {
         for (row, rowArray) in enumerate(obstaclesArray as [[Int]]) {
+            // convert the row so that the bottom row has index 0 instead of the top row
             let tileRow = NumRows - row - 1
             for (column, value) in enumerate(rowArray) {
                 if value == 1 {
                     let block = Block(column: column, row: row)
                     obstacles[column, tileRow] = block
-                    obstaclesSet.addElement(block)
+                    obstaclesSet.addElement(block) // why do we use obstaclesSet? faster lookup?
                 }
             }
         }
     }
     
-    func setupGraph(tilesArray: AnyObject) {
+    private func setupGraph(tilesArray: AnyObject) {
         graph = Graph(walkable: tilesArray as [[Int]])
     }
     

@@ -9,9 +9,9 @@
 import SpriteKit
 
 enum ObstacleType: Int, Printable {
-    case Unknown = 0, Block
+    case Unknown = 0, Hero, Block
     var spriteName: String {
-        let spriteNames = ["block"]
+        let spriteNames = ["hero_front_00", "block"]
         
         return spriteNames[rawValue - 1]
     }
@@ -34,13 +34,17 @@ class Obstacle: Printable, Hashable {
         return "type: \(obstacleType) square (\(column), \(row)"
     }
     var hashValue: Int {
-        return row*10 + column
+        return row * 10 + column
     }
 
     init(column: Int, row: Int, obstacleType: ObstacleType) {
         self.column = column
         self.row = row
         self.obstacleType = obstacleType
+    }
+    
+    func getCoords() -> (Int, Int) {
+        return (column, row)
     }
 }
 
@@ -53,5 +57,13 @@ class Block: Obstacle {
         super.init(column: column, row: row, obstacleType: ObstacleType.Block)
         self.walkable = false
         self.flippable = true
+    }
+}
+
+class Hero: Obstacle {
+    init(column: Int, row: Int) {
+        super.init(column: column, row: row, obstacleType: ObstacleType.Hero)
+        self.walkable = true
+        self.flippable = false
     }
 }

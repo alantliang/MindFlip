@@ -1,10 +1,14 @@
+// Part of the View. Put animations and things that interact with the screen here
+
+
 import SpriteKit
 
 class GameScene: SKScene {
     var level: Level!
     var heroColumn: Int!
     var heroRow: Int!
-    var hero: SKSpriteNode! = SKSpriteNode(imageNamed: "hero_front_00")
+    // var hero: Hero!
+    // var hero: SKSpriteNode! = SKSpriteNode(imageNamed: "hero_front_00")
     
     var initialCell: (Int, Int)?
     var endCell: (Int, Int)?
@@ -42,11 +46,11 @@ class GameScene: SKScene {
         gameLayer.addChild(tilesLayer)
         playerLayer.position = layerPosition
         gameLayer.addChild(playerLayer)
-        hero.position = CGPoint(x: 0, y: 0)
-        hero.zPosition = 100
+        // hero.position = CGPoint(x: 0, y: 0)
+        // hero.zPosition = 100
 //        hero.xScale = 0.4 * 0.7
 //        hero.yScale = 0.5 * 0.7
-        playerLayer.addChild(hero)
+        // playerLayer.addChild(hero)
         selectedCell.alpha = 0.3
         selectedCell.zPosition = 90
         playerLayer.addChild(selectedCell)
@@ -55,17 +59,6 @@ class GameScene: SKScene {
     override func didMoveToView(view: SKView) {
         println("Moved to gamescene view")
     }
-    
-    func addSpritesForObstacles(obstacles: Set<Obstacle>) {
-        for obstacle in obstacles {
-            let sprite = SKSpriteNode(imageNamed: obstacle.obstacleType.spriteName)
-            sprite.position = pointForColumn(obstacle.column, row: obstacle.row)
-            sprite.size = CGSize(width: TileWidth, height: TileHeight)
-            playerLayer.addChild(sprite)
-            obstacle.sprite = sprite
-        }
-    }
-    
     
     func pointForColumn(column: Int, row: Int) -> CGPoint {
         return CGPoint(
@@ -97,49 +90,65 @@ class GameScene: SKScene {
         }
     }
     
-    func addHero() {
-        // currently is adding hero and adding selected cell
-        let start = level.getStartPosition()!
-        heroColumn = start.0
-        heroRow = start.1
-        var startPosition = pointForColumn(start.0, row: start.1)
-        hero.position = startPosition
-        selectedCell.position = startPosition
-        println("Starting position \(level.getStartPosition())")
+    func addSpritesForObstacles() {
+        let obstacles = level.getObstacles()
+        for obstacle in obstacles {
+            let sprite = SKSpriteNode(imageNamed: obstacle.obstacleType.spriteName)
+            sprite.position = pointForColumn(obstacle.column, row: obstacle.row)
+            if obstacle.obstacleType != ObstacleType.Hero {
+                sprite.size = CGSize(width: TileWidth, height: TileHeight)
+            }
+            sprite.zPosition = 100
+            playerLayer.addChild(sprite)
+            obstacle.sprite = sprite
+        }
     }
     
+//    func addHero() {
+//        // currently is adding hero and adding selected cell
+//        let start = level.getStartPosition()!
+//        heroColumn = start.0
+//        heroRow = start.1
+//        var startPosition = pointForColumn(start.0, row: start.1)
+//        hero.position = startPosition
+//        selectedCell.position = startPosition
+//        println("Starting position \(level.getStartPosition())")
+//    }
+    
     func moveHero(column: Int, row: Int) {
-        let (success, startColumn, startRow) = convertPoint(hero.position)
-        if success {
-            let start = (startColumn, startRow)
-            let goal = (column, row)
-            let bestPath = AStar(graph: level.getGraph(), start: start, goal: goal).run()
-            var actions: [SKAction] = []
-            var prevColumn = heroColumn
-            var prevRow = heroRow
-            for (index, node) in enumerate(bestPath) {
-                if index == 0 {
-                    continue
-                }
-                // move one space
-                var groupActions: [SKAction] = []
-                let goalPosition = pointForColumn(node.x, row: node.y)
-                if let walkDirection = getWalk((prevColumn, prevRow), end: (node.x, node.y)) {
-                    groupActions.append(walkDirection)
-                }
-                let move = SKAction.moveTo(goalPosition, duration: 0.3)
-                // move.timingMode = .EaseOut
-                groupActions.append(move)
-                actions.append(SKAction.group(groupActions))
-                prevColumn = node.x
-                prevRow = node.y
+        // currently is managing the model and the view. Need to split up the jobs
+        let hero = level.getHero()
+        let start = hero.getCoords()
+        let goal = (column, row)
+        // first we should check if a path even exists
+        let bestPath = AStar(graph: level.getGraph(), start: start, goal: goal).run()
+        
+        
+        var actions: [SKAction] = []
+        var prevColumn = hero.column
+        var prevRow = hero.row
+        for (index, node) in enumerate(bestPath) {
+            if index == 0 {
+                continue
             }
-            heroColumn = goal.0
-            heroRow = goal.1
-            hero.runAction(SKAction.sequence(actions), completion: {
-                    self.userInteractionEnabled = true
-                    println("Set userInteractionEnabled to true")})
+            // move one space
+            var groupActions: [SKAction] = []
+            let goalPosition = pointForColumn(node.x, row: node.y)
+            if let walkDirection = getWalk((prevColumn, prevRow), end: (node.x, node.y)) {
+                groupActions.append(walkDirection)
+            }
+            let move = SKAction.moveTo(goalPosition, duration: 0.3)
+            // move.timingMode = .EaseOut
+            groupActions.append(move)
+            actions.append(SKAction.group(groupActions))
+            prevColumn = node.x
+            prevRow = node.y
         }
+        hero.column = goal.0
+        hero.row = goal.1
+        hero.sprite?.runAction(SKAction.sequence(actions), completion: {
+                self.userInteractionEnabled = true
+                println("Set userInteractionEnabled to true")})
     }
     
     func moveSelected(column: Int, row: Int) {
@@ -155,34 +164,6 @@ class GameScene: SKScene {
     
 //    override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
 //    }
-    
-    func drawCustomImage(size: CGSize) -> UIImage {
-        // Draw images in swift
-        // Setup our ocntext here
-        let bounds = CGRect(origin: CGPoint.zeroPoint, size: size)
-        let opaque = false
-        let scale: CGFloat = 0
-        UIGraphicsBeginImageContextWithOptions(size, opaque, scale)
-        let context = UIGraphicsGetCurrentContext()
-        
-        // Setup complete, do drawing here
-        CGContextSetStrokeColorWithColor(context, UIColor.redColor().CGColor)
-        CGContextSetLineWidth(context, 2.0)
-        
-        CGContextStrokeRect(context, bounds)
-        
-        CGContextBeginPath(context)
-        CGContextMoveToPoint(context, CGRectGetMinX(bounds), CGRectGetMinY(bounds))
-        CGContextAddLineToPoint(context, CGRectGetMaxX(bounds), CGRectGetMaxY(bounds))
-        CGContextMoveToPoint(context, CGRectGetMaxX(bounds), CGRectGetMinY(bounds))
-        CGContextAddLineToPoint(context, CGRectGetMinX(bounds), CGRectGetMaxY(bounds))
-        CGContextStrokePath(context)
-        
-        // Drawing complete, retrieve the finished image and cleanup
-        let image = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        return image
-    }
     
     func getWalk(start: (Int, Int), end: (Int, Int)) -> SKAction? {
         var action: SKAction?
@@ -268,19 +249,10 @@ class GameScene: SKScene {
                     moveHero(column, row: row)
                 }
             }
-
-            // println("Column: \(selectedColumn), Row: \(selectedRow)")
-
-            
-            // selectedColumn = column
-            // selectedRow = row
-//            hero.removeActionForKey("running")
-//            hero.texture = SKTexture(imageNamed: "hero_00")
         }
     }
     
     func flip() {
-        println("Flip baby")
         let direction = CGVector(dx: endPoint!.x - initialPoint!.x, dy: endPoint!.y - initialPoint!.y)
         let angle = atan2(direction.dy, direction.dx)
         var deg = Double(angle * CGFloat(180.0 / M_PI))
