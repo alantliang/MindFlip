@@ -31,8 +31,7 @@ class Level {
                 obstaclesSet.addElement(hero) // why do we use obstaclesSet? faster lookup?
             }
         }
-        var walkable: [[Int]] = getWalkable()
-        setupGraph(walkable)
+        setupGraph(getWalkable())
     }
     
     func isWalkable(column: Int, row: Int) -> Bool {
@@ -55,15 +54,19 @@ class Level {
         return startPosition
     }
     
-    func getWalkable() -> [[Int]] {
+    func getWalkable() -> Array2D<Int> {
         // assuming height and width are same for both
-        var walkable: [[Int]] = emptyMatrix(NumRows, columns: NumColumns)
+        var walkable = Array2D<Int>(columns: NumColumns, rows: NumRows)
         for y in Range(start: 0, end: NumRows - 1) {
             for x in Range(start: 0, end: NumColumns - 1) {
-                if [y][x] == 1 && myObstacles[y][x] == 0 {
-                    walkable[y][x] = 1
-                } else {
-                    walkable[y][x] = 0
+                walkable[x, y] = 0
+                if let tile = tiles[x, y] {
+                    walkable[x, y] = 1
+                    if let obstacle = obstacles[x, y] {
+                        if !obstacle.walkable {
+                            walkable[x, y] = 0
+                        }
+                    }
                 }
             }
         }
@@ -107,8 +110,8 @@ class Level {
         }
     }
     
-    private func setupGraph(tilesArray: AnyObject) {
-        graph = Graph(walkable: tilesArray as [[Int]])
+    private func setupGraph(walkable: Array2D<Int>) {
+        graph = Graph(walkable: walkable)
     }
     
     func tileAtColumn(column: Int, row: Int) -> Tile? {

@@ -19,10 +19,11 @@
 		E713FFB81A7DD96D000C8AA5 /* PokemonMysteryDungeonRedRescueTeamSheet4.gif in Resources */ = {isa = PBXBuildFile; fileRef = E713FFB71A7DD96D000C8AA5 /* PokemonMysteryDungeonRedRescueTeamSheet4.gif */; };
 		E747D99C1A8ADAD7005AE840 /* AStar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E747D99B1A8ADAD7005AE840 /* AStar.swift */; };
 		E747D99E1A8F9E76005AE840 /* Math.swift in Sources */ = {isa = PBXBuildFile; fileRef = E747D99D1A8F9E76005AE840 /* Math.swift */; };
-		E747D9A11A91197E005AE840 /* AStar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E747D99B1A8ADAD7005AE840 /* AStar.swift */; };
 		E747D9A21A911982005AE840 /* Math.swift in Sources */ = {isa = PBXBuildFile; fileRef = E747D99D1A8F9E76005AE840 /* Math.swift */; };
 		E747D9A51A911B45005AE840 /* AStarTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E747D9A41A911B45005AE840 /* AStarTest.swift */; };
 		E747D9A71A96C8F4005AE840 /* Obstacle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E747D9A61A96C8F4005AE840 /* Obstacle.swift */; };
+		E747D9A81AA02DEC005AE840 /* AStar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E747D99B1A8ADAD7005AE840 /* AStar.swift */; };
+		E747D9A91AA02E64005AE840 /* Array2D.swift in Sources */ = {isa = PBXBuildFile; fileRef = E713FFA81A7C7989000C8AA5 /* Array2D.swift */; };
 		E775CBE41A79F180004CB994 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E775CBE31A79F180004CB994 /* AppDelegate.swift */; };
 		E775CBE61A79F180004CB994 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = E775CBE51A79F180004CB994 /* GameScene.sks */; };
 		E775CBE81A79F180004CB994 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = E775CBE71A79F180004CB994 /* GameScene.swift */; };
@@ -295,9 +296,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				E775CBFE1A79F180004CB994 /* MindFlipTests.swift in Sources */,
+				E747D9A81AA02DEC005AE840 /* AStar.swift in Sources */,
 				E747D9A51A911B45005AE840 /* AStarTest.swift in Sources */,
-				E747D9A11A91197E005AE840 /* AStar.swift in Sources */,
 				E747D9A21A911982005AE840 /* Math.swift in Sources */,
+				E747D9A91AA02E64005AE840 /* Array2D.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

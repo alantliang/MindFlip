@@ -44,17 +44,22 @@ public class Graph {
     var width: Int
     var height: Int
     
-    init(walkable: [[Int]]) {
+    init(walkable: Array2D<Int>) {
         // we are assuming a rectangular shape so we can take the first element's count as the width
-        self.width = walkable[0].count
-        self.height = walkable.count
-        for (row, rowArray) in enumerate(walkable) {
-            let tileRow = walkable.count - row - 1 // match the same cell ordering as tiles
-            for (column, value) in enumerate(rowArray) {
-                let walkableBool = (value == 1)
-                addNode(column, row: tileRow, walkable: walkableBool)
+        width = walkable.columns
+        height = walkable.rows
+        for x in Range(start: 0, end: width) {
+            for y in Range(start: 0, end: height) {
+                addNode(x, row: y, walkable: walkable[x, y] == 1)
             }
         }
+//        for (row, rowArray) in enumerate(walkable) {
+//            let tileRow = walkable.count - row - 1 // match the same cell ordering as tiles
+//            for (column, value) in enumerate(rowArray) {
+//                let walkableBool = (value == 1)
+//                addNode(column, row: tileRow, walkable: walkableBool)
+//            }
+//        }
         connectNodes()
     }
     
@@ -88,6 +93,7 @@ public class Graph {
     private func connectNodes() {
         // Connects nodes to all neighbors. We want to connect the bottom node to the top node and the left node to the right most node like in pacman
         for node in nodes {
+            println("\(node.x), \(node.y)")
             if node.walkable {
                 let upNode = getNode(node.x, y: node.y + 1)
                 let rightNode = getNode(node.x + 1, y: node.y)
