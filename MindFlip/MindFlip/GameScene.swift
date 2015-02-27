@@ -311,7 +311,9 @@ class GameScene: SKScene {
     }
     
     func isMove(column: Int, row: Int) -> Bool {
-        return (column == initialCell?.0) && (row == initialCell?.1) && !((column == heroColumn) && (row == heroRow))
+        let hero = level.getHero()
+        return ((column == initialCell?.0) && (row == initialCell?.1) &&
+            !((column == hero.column) && (row == hero.row)))
     }
         
     

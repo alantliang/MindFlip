@@ -93,7 +93,7 @@ public class Graph {
     private func connectNodes() {
         // Connects nodes to all neighbors. We want to connect the bottom node to the top node and the left node to the right most node like in pacman
         for node in nodes {
-            println("\(node.x), \(node.y)")
+            // println("\(node.x), \(node.y)")
             if node.walkable {
                 let upNode = getNode(node.x, y: node.y + 1)
                 let rightNode = getNode(node.x + 1, y: node.y)
