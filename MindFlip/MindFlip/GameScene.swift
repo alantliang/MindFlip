@@ -5,20 +5,15 @@ import SpriteKit
 
 class GameScene: SKScene {
     var level: Level!
-    var heroColumn: Int!
-    var heroRow: Int!
-    // var hero: Hero!
-    // var hero: SKSpriteNode! = SKSpriteNode(imageNamed: "hero_front_00")
     
     var initialCell: (Int, Int)?
     var endCell: (Int, Int)?
     var initialPoint: CGPoint?
     var endPoint: CGPoint?
-    // var selectedGoal: (Int, Int)?
     
     let TileWidth: CGFloat = 40.5 // 4.5 * 8. original was 32
     let TileHeight: CGFloat = 40.5 // 4.5 * 9. original was 36
-    var selectedCell: SKSpriteNode! = SKSpriteNode(color: UIColor.greenColor(), size: CGSize(width: 40.5, height: 40.5))
+    // var selectedCell: SKSpriteNode! = SKSpriteNode(color: UIColor.greenColor(), size: CGSize(width: 40.5, height: 40.5))
     
     let gameLayer = SKNode()
     let tilesLayer = SKNode()
@@ -46,18 +41,14 @@ class GameScene: SKScene {
         gameLayer.addChild(tilesLayer)
         playerLayer.position = layerPosition
         gameLayer.addChild(playerLayer)
-        // hero.position = CGPoint(x: 0, y: 0)
-        // hero.zPosition = 100
-//        hero.xScale = 0.4 * 0.7
-//        hero.yScale = 0.5 * 0.7
-        // playerLayer.addChild(hero)
-        selectedCell.alpha = 0.3
-        selectedCell.zPosition = 90
-        playerLayer.addChild(selectedCell)
     }
     
     override func didMoveToView(view: SKView) {
         println("Moved to gamescene view")
+        // currently add destCell here. Think of a better way
+        addSpriteForDestCell()
+        //level.moveDestCell(level.getDestCell().column, row: level.getDestCell().row)
+        
     }
     
     func pointForColumn(column: Int, row: Int) -> CGPoint {
@@ -104,16 +95,20 @@ class GameScene: SKScene {
         }
     }
     
-//    func addHero() {
-//        // currently is adding hero and adding selected cell
-//        let start = level.getStartPosition()!
-//        heroColumn = start.0
-//        heroRow = start.1
-//        var startPosition = pointForColumn(start.0, row: start.1)
-//        hero.position = startPosition
-//        selectedCell.position = startPosition
-//        println("Starting position \(level.getStartPosition())")
-//    }
+    func addSpriteForDestCell() {
+        var destCell: DestCell = level.getDestCell()
+        var sprite: SKSpriteNode = SKSpriteNode(color: UIColor.greenColor(), size: CGSize(width: TileWidth, height: TileHeight))
+        sprite.alpha = 0.3
+        sprite.zPosition = 90
+        sprite.position = pointForColumn(destCell.column, row: destCell.row)
+        playerLayer.addChild(sprite)
+        destCell.sprite = sprite
+    }
+    
+    func moveSpriteForDestCell(column: Int, row: Int) {
+        var destCell: DestCell = level.getDestCell()
+        destCell.sprite!.position = pointForColumn(column, row: row)
+    }
     
     func moveHero(column: Int, row: Int) {
         // currently is managing the model and the view. Need to split up the jobs
@@ -150,20 +145,6 @@ class GameScene: SKScene {
                 self.userInteractionEnabled = true
                 println("Set userInteractionEnabled to true")})
     }
-    
-    func moveSelected(column: Int, row: Int) {
-        selectedCell.position = pointForColumn(column, row: row)
-    }
-    
-//    func animateWalkOne(goal: Node) {
-//        let goalPosition = pointForColumn(goal.x, row: goal.y)
-//        let move = SKAction.moveTo(goalPosition, duration: 0.3)
-//        // move.timingMode = .Linear
-//        hero.runAction(move)
-//    }
-    
-//    override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
-//    }
     
     func getWalk(start: (Int, Int), end: (Int, Int)) -> SKAction? {
         var action: SKAction?
@@ -245,11 +226,16 @@ class GameScene: SKScene {
                 if level.isWalkable(column, row: row) && isAStar() {
                     self.userInteractionEnabled = false
                     println("Set userInteractionEnabled to false")
-                    moveSelected(column, row: row)
+                    moveDest(column, row: row)
                     moveHero(column, row: row)
                 }
             }
         }
+    }
+    
+    func moveDest(column: Int, row: Int) {
+        level.moveDestCell(column, row: row)
+        moveSpriteForDestCell(column, row: row)
     }
     
     func flip() {

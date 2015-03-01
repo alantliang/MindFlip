@@ -11,6 +11,7 @@ class Level {
     private var obstacles = Array2D<Obstacle>(columns: NumColumns, rows: NumRows)
     private var obstaclesSet = Set<Obstacle>()
     private var hero: Hero!
+    private var destCell: DestCell!
     private var graph: Graph!
     private var startPosition: (Int, Int)!
     
@@ -27,6 +28,9 @@ class Level {
                 let startList = startList as [Int]
                 startPosition = (startList[0], startList[1])
                 hero = Hero(column: startList[0], row: startList[1])
+                // need to allow for multiple objects on same cell
+                // for now just add destCell manually
+                destCell = DestCell(column: startList[0], row: startList[1])
                 obstacles[startList[0], startList[1]] = hero
                 obstaclesSet.addElement(hero) // why do we use obstaclesSet? faster lookup?
             }
@@ -36,6 +40,11 @@ class Level {
     
     func isWalkable(column: Int, row: Int) -> Bool {
         return graph.getNode(column, y: row).walkable
+    }
+    
+    func moveDestCell(column: Int, row: Int) {
+        destCell.column = column
+        destCell.row = row
     }
     
     func getHero() -> Hero {
@@ -52,6 +61,10 @@ class Level {
     
     func getStartPosition() -> (Int, Int)? {
         return startPosition
+    }
+    
+    func getDestCell() -> DestCell {
+        return destCell
     }
     
     func getWalkable() -> Array2D<Int> {
