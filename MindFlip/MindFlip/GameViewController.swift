@@ -30,7 +30,7 @@ class GameViewController: UIViewController {
         scene.scaleMode = .AspectFill
         
         // Present the scene.
-        level = Level(filename: "Level_0")
+        level = Level(filename: "Level_oneblock")
         scene.level = level
         scene.addTiles()
         scene.addSpritesForObstacles()

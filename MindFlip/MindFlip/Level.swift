@@ -8,7 +8,7 @@ let NumRows = 8
 
 class Level {
     private var tiles = Array2D<Tile>(columns: NumColumns, rows: NumRows)
-    private var obstacles = Array2D<Obstacle>(columns: NumColumns, rows: NumRows)
+    private var obstacles = Array2D<Obstacle>(columns: NumColumns, rows: NumRows) // might want a different data structures to access all obstacles. Make separate class? that has a list?
     private var obstaclesSet = Set<Obstacle>()
     private var hero: Hero!
     private var destCell: DestCell!
@@ -19,9 +19,9 @@ class Level {
         if let dictionary = Dictionary<String, AnyObject>.loadJSONFromBundle(filename) {
             if let tilesArray: AnyObject = dictionary["tiles"] {
                 setupTiles(tilesArray)
-                if let blocksArray: AnyObject = dictionary["obstacles"] {
-                    setupObstacles(blocksArray)
-                }
+            }
+            if let blocksArray: AnyObject = dictionary["obstacles"] {
+                setupObstacles(blocksArray)
             }
             if let startList: AnyObject = dictionary["starting"] {
                 println("Startlist exists")
@@ -47,6 +47,33 @@ class Level {
         destCell.row = row
     }
     
+    func flipHorizontal() {
+        println("level.flipHorizontal")
+        // for obstacle in obstacles, if flippable, flip over the middle line
+        // assume we have an even number of lines
+        let horizontal: Int = NumRows/2
+        let maxRowIndex: Int = NumRows - 1
+        // flip bottom half
+        var newObstacles = Array2D<Obstacle>(columns: NumColumns, rows: NumRows)
+        for y in Range(start: 0, end: NumRows) {
+            for x in Range(start: 0, end: NumColumns) {
+                if var currentObstacle: Obstacle = obstacles[x, y] {
+                    if currentObstacle.flippable {
+                        // flip over horizontal axis
+                        let flipy = maxRowIndex - y
+                        currentObstacle.column = x
+                        currentObstacle.row = flipy
+                        newObstacles[x, flipy] = currentObstacle
+                    } else {
+                        // will run into some problems if reflecting onto the hero
+                        newObstacles[x, y] = currentObstacle
+                    }
+                }
+            }
+        }
+        obstacles = newObstacles
+    }
+    
     func getHero() -> Hero {
         return hero
     }
@@ -55,8 +82,12 @@ class Level {
         return graph
     }
     
-    func getObstacles() -> Set<Obstacle> {
+    func getObstaclesSet() -> Set<Obstacle> {
         return obstaclesSet
+    }
+    
+    func getObstacles() -> Array2D<Obstacle> {
+        return obstacles
     }
     
     func getStartPosition() -> (Int, Int)? {
@@ -115,7 +146,8 @@ class Level {
             let tileRow = NumRows - row - 1
             for (column, value) in enumerate(rowArray) {
                 if value == 1 {
-                    let block = Block(column: column, row: row)
+                    println("setupObstacles: \(column), \(tileRow)")
+                    let block = Block(column: column, row: tileRow)
                     obstacles[column, tileRow] = block
                     obstaclesSet.addElement(block) // why do we use obstaclesSet? faster lookup?
                 }

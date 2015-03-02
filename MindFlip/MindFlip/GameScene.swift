@@ -82,10 +82,11 @@ class GameScene: SKScene {
     }
     
     func addSpritesForObstacles() {
-        let obstacles = level.getObstacles()
+        let obstacles = level.getObstaclesSet()
         for obstacle in obstacles {
             let sprite = SKSpriteNode(imageNamed: obstacle.obstacleType.spriteName)
             sprite.position = pointForColumn(obstacle.column, row: obstacle.row)
+            println("\(obstacle.column), \(obstacle.row)")
             if obstacle.obstacleType != ObstacleType.Hero {
                 sprite.size = CGSize(width: TileWidth, height: TileHeight)
             }
@@ -251,6 +252,7 @@ class GameScene: SKScene {
                 println("up-right")
             } else if (90 + delta > deg && deg > 90 - delta) {
                 println("up")
+                flipHorizontal()
             } else if (135 + delta >= deg && deg >= 135 - delta) {
                 println("up-left")
             } else if (180 >= deg && deg > 180 - delta) {
@@ -267,6 +269,7 @@ class GameScene: SKScene {
                 println("down-right")
             } else if (90 + delta > absDeg && absDeg > 90 - delta) {
                 println("down")
+                flipHorizontal()
             } else if (135 + delta >= absDeg && absDeg >= 135 - delta) {
                 println("down-left")
             } else if (180 >= absDeg && absDeg > 180 - delta) {
@@ -281,10 +284,30 @@ class GameScene: SKScene {
     }
     
     func flipHorizontal() {
+        println("Flip Horizontal")
+        level.flipHorizontal()
+        animateObstacleMoves()
         // for obstacle in obstacle:
         // if obstacle above line, flip below + 2x distance from middle line
         // if obstacle below line, flip up
-        return
+        
+        // get initial position of obstacles?
+        // move obstacles in level
+        // animate obstacle moves
+    }
+    
+    func animateObstacleMoves() {
+        // var groupActions: [SKAction] = []
+        let obstacles = level.getObstacles()
+        for x in Range(start:0, end: NumColumns) {
+            for y in Range(start: 0, end: NumRows) {
+                if let obstacle = obstacles[x, y] {
+                    let goalPosition = pointForColumn(obstacle.column, row: obstacle.row)
+                    let move = SKAction.moveTo(goalPosition, duration: 0.3)
+                    obstacle.sprite!.runAction(move)
+                }
+            }
+        }
     }
     
     func isSwipe() -> Bool {
