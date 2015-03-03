@@ -336,7 +336,8 @@ class GameScene: SKScene {
     }
     
     func enableTouch() {
-        println("Enabling touch")
+        println("Enabling touch & reset graph")
+        level.resetGraph()
         self.userInteractionEnabled = true
     }
     

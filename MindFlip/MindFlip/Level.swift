@@ -234,6 +234,10 @@ class Level {
         graph = Graph(walkable: walkable)
     }
     
+    func resetGraph() {
+        setupGraph(getWalkable())
+    }
+    
     func tileAtColumn(column: Int, row: Int) -> Tile? {
         assert(column >= 0 && column < NumColumns)
         assert(row >= 0 && row < NumRows)
