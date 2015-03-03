@@ -143,8 +143,8 @@ class GameScene: SKScene {
         hero.column = goal.0
         hero.row = goal.1
         hero.sprite?.runAction(SKAction.sequence(actions), completion: {
-                self.userInteractionEnabled = true
-                println("Set userInteractionEnabled to true")})
+            self.userInteractionEnabled = true
+            println("Set userInteractionEnabled to true")})
     }
     
     func getWalk(start: (Int, Int), end: (Int, Int)) -> SKAction? {
@@ -169,7 +169,7 @@ class GameScene: SKScene {
             SKTexture(imageNamed: "hero_front_01"),
             SKTexture(imageNamed: "hero_front_02")
             ], timePerFrame: 0.15)
-
+        
         let heroRightAnim = SKAction.animateWithTextures([
             SKTexture(imageNamed: "hero_right_01"),
             SKTexture(imageNamed: "hero_right_02")
@@ -187,16 +187,16 @@ class GameScene: SKScene {
         
         var currentAnim: SKAction?
         switch direction {
-            case "DOWN":
-                currentAnim = heroDownAnim
-            case "RIGHT":
-                currentAnim = heroRightAnim
-            case "LEFT":
-                currentAnim = heroLeftAnim
-            case "UP":
-                currentAnim = heroUpAnim
-            default:
-                println("\(direction) is not handled")
+        case "DOWN":
+            currentAnim = heroDownAnim
+        case "RIGHT":
+            currentAnim = heroRightAnim
+        case "LEFT":
+            currentAnim = heroLeftAnim
+        case "UP":
+            currentAnim = heroUpAnim
+        default:
+            println("\(direction) is not handled")
         }
         
         return SKAction.repeatAction(currentAnim!, count: 1)
@@ -248,15 +248,19 @@ class GameScene: SKScene {
             // we are flipping up
             if (0.0 + delta > deg) {
                 println("right")
+                flipRight()
             } else if (45.0 + delta >= deg && deg >= 45 - delta) {
                 println("up-right")
+                flipUpRight()
             } else if (90 + delta > deg && deg > 90 - delta) {
                 println("up")
-                flipHorizontal()
+                flipUp()
             } else if (135 + delta >= deg && deg >= 135 - delta) {
                 println("up-left")
+                flipUpLeft()
             } else if (180 >= deg && deg > 180 - delta) {
                 println("left")
+                flipRight()
             } else {
                 println("Did not expect to get here: \(deg)")
             }
@@ -265,49 +269,75 @@ class GameScene: SKScene {
             // we are going down
             if (0.0 + delta > absDeg) {
                 println("right")
+                flipRight()
             } else if (45.0 + delta >= absDeg && absDeg >= 45 - delta) {
                 println("down-right")
+                flipUpLeft()
             } else if (90 + delta > absDeg && absDeg > 90 - delta) {
                 println("down")
-                flipHorizontal()
+                flipUp()
             } else if (135 + delta >= absDeg && absDeg >= 135 - delta) {
                 println("down-left")
+                flipUpRight()
             } else if (180 >= absDeg && absDeg > 180 - delta) {
                 println("left")
+                flipRight()
             } else {
                 println("Did not expect to get here: \(deg)")
             }
         }
         
-        println("Degrees: \(deg)")
+        // println("Degrees: \(deg)")
         return
     }
     
-    func flipHorizontal() {
-        println("Flip Horizontal")
-        level.flipHorizontal()
-        animateObstacleMoves()
-        // for obstacle in obstacle:
-        // if obstacle above line, flip below + 2x distance from middle line
-        // if obstacle below line, flip up
-        
-        // get initial position of obstacles?
-        // move obstacles in level
-        // animate obstacle moves
+    func flipUp() {
+        println("Flip up")
+        self.userInteractionEnabled = false
+        level.flipUp()
+        animateObstacleMoves(enableTouch)
     }
     
-    func animateObstacleMoves() {
+    func flipRight() {
+        println("Flip right")
+        self.userInteractionEnabled = false
+        level.flipRight()
+        animateObstacleMoves(enableTouch)
+    }
+    
+    func flipUpRight() {
+        println("Flip up right")
+        self.userInteractionEnabled = false
+        level.flipUpRight()
+        animateObstacleMoves(enableTouch)
+    }
+    
+    func flipUpLeft() {
+        println("Flip up left")
+        self.userInteractionEnabled = false
+        level.flipUpLeft()
+        animateObstacleMoves(enableTouch)
+    }
+    
+    func animateObstacleMoves(completion: () -> ()) {
         // var groupActions: [SKAction] = []
         let obstacles = level.getObstacles()
         for x in Range(start:0, end: NumColumns) {
-            for y in Range(start: 0, end: NumRows) {
+            for y in Range(start: 0, end: NumRows) { // if we put this in a set, less interation
                 if let obstacle = obstacles[x, y] {
                     let goalPosition = pointForColumn(obstacle.column, row: obstacle.row)
                     let move = SKAction.moveTo(goalPosition, duration: 0.3)
+                    move.timingMode = .EaseOut
                     obstacle.sprite!.runAction(move)
                 }
             }
         }
+        runAction(SKAction.waitForDuration(0.31), completion: completion)
+    }
+    
+    func enableTouch() {
+        println("Enabling touch")
+        self.userInteractionEnabled = true
     }
     
     func isSwipe() -> Bool {
@@ -324,10 +354,10 @@ class GameScene: SKScene {
         return ((column == initialCell?.0) && (row == initialCell?.1) &&
             !((column == hero.column) && (row == hero.row)))
     }
-        
     
-//
-//    override func touchesCancelled(touches: NSSet, withEvent event: UIEvent) {
-//        touchesEnded(touches, withEvent: event)
-//    }
+    
+    //
+    //    override func touchesCancelled(touches: NSSet, withEvent event: UIEvent) {
+    //        touchesEnded(touches, withEvent: event)
+    //    }
 }

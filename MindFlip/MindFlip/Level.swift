@@ -47,11 +47,10 @@ class Level {
         destCell.row = row
     }
     
-    func flipHorizontal() {
+    func flipUp() {
         println("level.flipHorizontal")
         // for obstacle in obstacles, if flippable, flip over the middle line
         // assume we have an even number of lines
-        let horizontal: Int = NumRows/2
         let maxRowIndex: Int = NumRows - 1
         // flip bottom half
         var newObstacles = Array2D<Obstacle>(columns: NumColumns, rows: NumRows)
@@ -66,6 +65,82 @@ class Level {
                         newObstacles[x, flipy] = currentObstacle
                     } else {
                         // will run into some problems if reflecting onto the hero
+                        newObstacles[x, y] = currentObstacle
+                    }
+                }
+            }
+        }
+        obstacles = newObstacles
+    }
+    
+    func flipRight() { // might want to change these names because they can be confusing
+        println("level.flipVertical")
+        // for obstacle in obstacles, if flippable, flip over the middle line
+        // assume we have an even number of lines
+        let maxColumnIndex: Int = NumColumns - 1
+        // flip bottom half
+        var newObstacles = Array2D<Obstacle>(columns: NumColumns, rows: NumRows)
+        for y in Range(start: 0, end: NumRows) {
+            for x in Range(start: 0, end: NumColumns) {
+                if var currentObstacle: Obstacle = obstacles[x, y] {
+                    if currentObstacle.flippable {
+                        // flip over horizontal axis
+                        let flipx = maxColumnIndex - x
+                        // bad that we have to change both of these things
+                        currentObstacle.column = flipx
+                        currentObstacle.row = y
+                        newObstacles[flipx, y] = currentObstacle
+                    } else {
+                        // will run into some problems if reflecting onto the hero
+                        newObstacles[x, y] = currentObstacle
+                    }
+                }
+            }
+        }
+        obstacles = newObstacles
+    }
+    
+    func flipUpRight() {
+        println("level.flipUpRight")
+        let maxColumnIndex: Int = NumColumns - 1
+        let maxRowIndex: Int = NumRows - 1
+        
+        var newObstacles = Array2D<Obstacle>(columns: NumColumns, rows: NumRows)
+        for y in Range(start: 0, end: NumRows) {
+            for x in Range(start: 0, end: NumColumns) {
+                if var currentObstacle: Obstacle = obstacles[x, y] {
+                    if currentObstacle.flippable {
+                        let flipx = maxColumnIndex - y
+                        let flipy = maxRowIndex - x
+                        currentObstacle.column = flipx
+                        currentObstacle.row = flipy
+                        newObstacles[flipx, flipy] = currentObstacle
+                        println("(\(x), \(y)) -> (\(flipx), \(flipy))")
+                    } else {
+                        newObstacles[x, y] = currentObstacle
+                    }
+                }
+            }
+        }
+        obstacles = newObstacles
+    }
+    
+    func flipUpLeft() {
+        println("level.flipUpRight")
+        let maxColumnIndex: Int = NumColumns - 1
+        let maxRowIndex: Int = NumRows - 1
+        
+        var newObstacles = Array2D<Obstacle>(columns: NumColumns, rows: NumRows)
+        for y in Range(start: 0, end: NumRows) {
+            for x in Range(start: 0, end: NumColumns) {
+                if var currentObstacle: Obstacle = obstacles[x, y] {
+                    if currentObstacle.flippable {
+                        let flipx = y
+                        let flipy = x
+                        currentObstacle.column = flipx
+                        currentObstacle.row = flipy
+                        newObstacles[flipx, flipy] = currentObstacle
+                    } else {
                         newObstacles[x, y] = currentObstacle
                     }
                 }
@@ -101,8 +176,8 @@ class Level {
     func getWalkable() -> Array2D<Int> {
         // assuming height and width are same for both
         var walkable = Array2D<Int>(columns: NumColumns, rows: NumRows)
-        for y in Range(start: 0, end: NumRows - 1) {
-            for x in Range(start: 0, end: NumColumns - 1) {
+        for y in Range(start: 0, end: NumRows) {
+            for x in Range(start: 0, end: NumColumns) {
                 walkable[x, y] = 0
                 if let tile = tiles[x, y] {
                     walkable[x, y] = 1

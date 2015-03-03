@@ -36,6 +36,5 @@ class GameViewController: UIViewController {
         scene.addSpritesForObstacles()
         // scene.addHero()
         skView.presentScene(scene)
-        
     }
 }

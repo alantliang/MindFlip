@@ -296,12 +296,28 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MindFlip/Level.swift"
-            timestampString = "446959625.910941"
+            timestampString = "447040266.792394"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "58"
-            endingLineNumber = "58"
-            landmarkName = "flipHorizontal()"
+            startingLineNumber = "57"
+            endingLineNumber = "57"
+            landmarkName = "flipUp()"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MindFlip/GameScene.swift"
+            timestampString = "447040266.792394"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "305"
+            endingLineNumber = "305"
+            landmarkName = "flipRight()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
