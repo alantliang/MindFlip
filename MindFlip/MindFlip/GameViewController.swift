@@ -1,9 +1,16 @@
 import UIKit
 import SpriteKit
+import AVFoundation
 
 class GameViewController: UIViewController {
     var scene: GameScene!
     var level: Level!
+    lazy var backgroundMusic: AVAudioPlayer = {
+        let url = NSBundle.mainBundle().URLForResource("Super Street Fighter IV - Theme of Ryu", withExtension: "mp3")
+        let player = AVAudioPlayer(contentsOfURL: url, error: nil)
+        player.numberOfLoops = -1
+        return player
+        }()
     
     override func prefersStatusBarHidden() -> Bool {
         return true
@@ -36,5 +43,6 @@ class GameViewController: UIViewController {
         scene.addSpritesForObstacles()
         // scene.addHero()
         skView.presentScene(scene)
+        backgroundMusic.play()
     }
 }

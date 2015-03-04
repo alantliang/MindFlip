@@ -19,6 +19,13 @@ class GameScene: SKScene {
     let tilesLayer = SKNode()
     let playerLayer = SKNode()
     
+    let randomSounds = ["Ryu_Shinkuu_Tatsumaki_Sound_Effect.mp3",
+        "Ryu_Hadouken_Sound_Effect.mp3",
+        "Ryu_Shoryuken_Sound_Effect.mp3",
+        "Ryu_Tatsumaki_Senpuu_Kyaku_Sound_Effect.mp3",
+        "Ryu_Shoryuken_Sound_FX.mp3"
+    ]
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder) is not used in this app")
     }
@@ -296,6 +303,7 @@ class GameScene: SKScene {
         self.userInteractionEnabled = false
         level.flipUp()
         animateObstacleMoves(enableTouch)
+        playFlipSound()
     }
     
     func flipRight() {
@@ -303,6 +311,7 @@ class GameScene: SKScene {
         self.userInteractionEnabled = false
         level.flipRight()
         animateObstacleMoves(enableTouch)
+        playFlipSound()
     }
     
     func flipUpRight() {
@@ -310,6 +319,7 @@ class GameScene: SKScene {
         self.userInteractionEnabled = false
         level.flipUpRight()
         animateObstacleMoves(enableTouch)
+        playFlipSound()
     }
     
     func flipUpLeft() {
@@ -317,6 +327,15 @@ class GameScene: SKScene {
         self.userInteractionEnabled = false
         level.flipUpLeft()
         animateObstacleMoves(enableTouch)
+        playFlipSound()
+    }
+    
+    func playFlipSound() {
+        let range: UInt32 = UInt32(randomSounds.count)
+        let index: Int = Int(arc4random_uniform(range))
+        let soundFile = randomSounds[index]
+        let flipSound = SKAction.playSoundFileNamed(soundFile, waitForCompletion: false)
+        runAction(flipSound)
     }
     
     func animateObstacleMoves(completion: () -> ()) {
