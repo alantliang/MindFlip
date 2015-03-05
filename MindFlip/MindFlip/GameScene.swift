@@ -13,7 +13,6 @@ class GameScene: SKScene {
     
     let TileWidth: CGFloat = 40.5 // 4.5 * 8. original was 32
     let TileHeight: CGFloat = 40.5 // 4.5 * 9. original was 36
-    // var selectedCell: SKSpriteNode! = SKSpriteNode(color: UIColor.greenColor(), size: CGSize(width: 40.5, height: 40.5))
     
     let gameLayer = SKNode()
     let tilesLayer = SKNode()
@@ -54,8 +53,6 @@ class GameScene: SKScene {
         println("Moved to gamescene view")
         // currently add destCell here. Think of a better way
         addSpriteForDestCell()
-        //level.moveDestCell(level.getDestCell().column, row: level.getDestCell().row)
-        
     }
     
     func pointForColumn(column: Int, row: Int) -> CGPoint {
@@ -79,9 +76,7 @@ class GameScene: SKScene {
                 if let tile = level.tileAtColumn(column, row: row) {
                     let tileNode = SKSpriteNode(imageNamed: "Tile")
                     tileNode.position = pointForColumn(column, row: row)
-                    // tileNode.xScale = 1.125 // this changes the size of the image? Or does it change the model? should only be image
                     tileNode.size = CGSize(width: TileWidth, height: TileHeight)
-                    // tileNode.yScale = 1.125
                     tilesLayer.addChild(tileNode)
                 }
             }
@@ -250,7 +245,8 @@ class GameScene: SKScene {
         let direction = CGVector(dx: endPoint!.x - initialPoint!.x, dy: endPoint!.y - initialPoint!.y)
         let angle = atan2(direction.dy, direction.dx)
         var deg = Double(angle * CGFloat(180.0 / M_PI))
-        let delta: Double = 45.0/2 // each direction is 45 degrees. Give additional half of that as margin for error
+        // each direction is 45 degrees. Give additional half of that as margin for error
+        let delta: Double = 45.0/2
         if (deg >= 0) {
             // we are flipping up
             if (0.0 + delta > deg) {
@@ -293,8 +289,6 @@ class GameScene: SKScene {
                 println("Did not expect to get here: \(deg)")
             }
         }
-        
-        // println("Degrees: \(deg)")
         return
     }
     
@@ -374,10 +368,9 @@ class GameScene: SKScene {
         return ((column == initialCell?.0) && (row == initialCell?.1) &&
             !((column == hero.column) && (row == hero.row)))
     }
+
     
-    
-    //
-    //    override func touchesCancelled(touches: NSSet, withEvent event: UIEvent) {
-    //        touchesEnded(touches, withEvent: event)
-    //    }
+    override func touchesCancelled(touches: NSSet, withEvent event: UIEvent) {
+        touchesEnded(touches, withEvent: event)
+    }
 }

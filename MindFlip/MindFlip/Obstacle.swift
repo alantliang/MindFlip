@@ -23,7 +23,7 @@ enum ObstacleType: Int, Printable {
     }
 }
 
-class Obstacle: Printable, Hashable {
+class GameObj: Printable, Hashable {
     var column: Int
     var row: Int
     var obstacleType: ObstacleType
@@ -48,11 +48,11 @@ class Obstacle: Printable, Hashable {
     }
 }
 
-func ==(lhs: Obstacle, rhs: Obstacle) -> Bool {
+func ==(lhs: GameObj, rhs: GameObj) -> Bool {
     return lhs.column == rhs.column && lhs.row == rhs.row
 }
 
-class Block: Obstacle {
+class Block: GameObj {
     init(column: Int, row: Int) {
         super.init(column: column, row: row, obstacleType: ObstacleType.Block)
         self.walkable = false
@@ -60,7 +60,7 @@ class Block: Obstacle {
     }
 }
 
-class Hero: Obstacle {
+class Hero: GameObj {
     init(column: Int, row: Int) {
         super.init(column: column, row: row, obstacleType: ObstacleType.Hero)
         self.walkable = true
@@ -68,7 +68,7 @@ class Hero: Obstacle {
     }
 }
 
-class DestCell: Obstacle {
+class DestCell: GameObj {
     // cell to just see where the destination is
     init(column: Int, row: Int) {
         super.init(column: column, row: row, obstacleType: ObstacleType.DestCell)
