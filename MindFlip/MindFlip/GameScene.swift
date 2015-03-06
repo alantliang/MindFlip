@@ -84,8 +84,11 @@ class GameScene: SKScene {
     }
     
     func addSpritesForObstacles() {
-        let obstacles = level.getObstaclesSet()
-        for obstacle in obstacles {
+        let objs: [GameObj] = level.getAllObjs()
+        for obstacle in objs {
+            if obstacle.obstacleType == ObstacleType.DestCell {
+                continue
+            }
             let sprite = SKSpriteNode(imageNamed: obstacle.obstacleType.spriteName)
             sprite.position = pointForColumn(obstacle.column, row: obstacle.row)
             println("\(obstacle.column), \(obstacle.row)")
@@ -334,14 +337,16 @@ class GameScene: SKScene {
     
     func animateObstacleMoves(completion: () -> ()) {
         // var groupActions: [SKAction] = []
-        let obstacles = level.getObstacles()
+        let cells = level.getCells()
         for x in Range(start:0, end: NumColumns) {
             for y in Range(start: 0, end: NumRows) { // if we put this in a set, less interation
-                if let obstacle = obstacles[x, y] {
-                    let goalPosition = pointForColumn(obstacle.column, row: obstacle.row)
-                    let move = SKAction.moveTo(goalPosition, duration: 0.3)
-                    move.timingMode = .EaseOut
-                    obstacle.sprite!.runAction(move)
+                if let cell = cells[x, y]? {
+                    for obj in cell.gameObjects {
+                        let goalPosition = pointForColumn(obj.column, row: obj.row)
+                        let move = SKAction.moveTo(goalPosition, duration: 0.3)
+                        move.timingMode = .EaseOut
+                        obj.sprite!.runAction(move)
+                    }
                 }
             }
         }

@@ -5,29 +5,59 @@ import Foundation
 
 let NumColumns = 8
 let NumRows = 8
+let MaxColumnIndex = NumColumns - 1
+let MaxRowIndex = NumRows - 1
 
 
 class Cell {
-    private var tile: Tile?
-    private var obstacles: [GameObj]?
-    private var x: Int?
-    private var y: Int?
-    
-    init() {
+    // Cell for every cell in our graph
+    var tile: Tile?
+    var gameObjects: [GameObj] = []
+    var x: Int?
+    var y: Int?
+     var walkable: Bool {
+        get {
+            var walkable = false
+            if let tileExists = tile? {
+                walkable = gameObjects.reduce(true, combine: {$0 && $1.walkable})
+            }
+            return walkable
+        }
     }
     
+    init(x: Int, y: Int) {
+        self.x = x
+        self.y = y
+    }
+    
+    func removeGameObj(obj: GameObj) {
+        for (index, obj) in enumerate(self.gameObjects) {
+            if (obj == obj) {
+                gameObjects.removeAtIndex(index)
+                break
+            } else {
+                // possibly raise exception
+            }
+        }
+    }
+    
+    func addGameObj(obj: GameObj) {
+        gameObjects.append(obj)
+    }
 }
 
 class Level {
+    private var cells = Array2D<Cell>(columns: NumColumns, rows: NumRows)
     private var tiles = Array2D<Tile>(columns: NumColumns, rows: NumRows)
-    private var obstacles = Array2D<GameObj>(columns: NumColumns, rows: NumRows) // might want a different data structures to access all obstacles. Make separate class? that has a list? yes
-    private var obstaclesSet = Set<GameObj>()
-    private var hero: Hero!
+    // private var obstacles = Array2D<GameObj>(columns: NumColumns, rows: NumRows) // might want a different data structures to access all obstacles. Make separate class? that has a list? yes
+    // private var obstaclesSet = Set<GameObj>()
+    private var hero: Hero! // we always want a reference to the hero
     private var destCell: DestCell!
-    private var graph: Graph!
-    private var startPosition: (Int, Int)!
+    private var graph: Graph! // make this calculated
+    private var start: (x: Int, y: Int)!
     
     init(filename: String) {
+        setupCells()
         if let dictionary = Dictionary<String, AnyObject>.loadJSONFromBundle(filename) {
             if let tilesArray: AnyObject = dictionary["tiles"] {
                 setupTiles(tilesArray)
@@ -38,13 +68,11 @@ class Level {
             if let startList: AnyObject = dictionary["starting"] {
                 println("Startlist exists")
                 let startList = startList as [Int]
-                startPosition = (startList[0], startList[1])
-                hero = Hero(column: startList[0], row: startList[1])
-                // need to allow for multiple objects on same cell
-                // for now just add destCell manually
-                destCell = DestCell(column: startList[0], row: startList[1])
-                obstacles[startList[0], startList[1]] = hero
-                obstaclesSet.addElement(hero) // why do we use obstaclesSet? faster lookup?
+                start = (x: startList[0], y: startList[1])
+                hero = Hero(column: start.x, row: start.y)
+                destCell = DestCell(column: start.x, row: start.y)
+                cells[start.x, start.y]!.addGameObj(hero)
+                cells[start.x, start.y]!.addGameObj(destCell)
             }
         }
         setupGraph(getWalkable())
@@ -58,107 +86,90 @@ class Level {
         destCell.column = column
         destCell.row = row
     }
-    
-    func flipUp() {
+
+    func flip(flipAlgo: (x: Int, y: Int) -> (x: Int, y: Int)) {
         println("level.flipHorizontal")
-        // for obstacle in obstacles, if flippable, flip over the middle line
-        // assume we have an even number of lines
-        let maxRowIndex: Int = NumRows - 1
-        // flip bottom half
-        var newObstacles = Array2D<GameObj>(columns: NumColumns, rows: NumRows)
-        for y in Range(start: 0, end: NumRows) {
-            for x in Range(start: 0, end: NumColumns) {
-                if var currentObstacle: GameObj = obstacles[x, y] {
-                    if currentObstacle.flippable {
-                        // flip over horizontal axis
-                        let flipy = maxRowIndex - y
-                        currentObstacle.column = x
-                        currentObstacle.row = flipy
-                        newObstacles[x, flipy] = currentObstacle
+        // for obstacle in obstacles, if flippable, flip using flip algorithm
+        var newLocations = Array2D<[GameObj]>(columns: NumColumns, rows: NumRows)
+        for y in 0..<NumRows {
+            for x in 0..<NumColumns {
+                newLocations[x, y] = []
+            }
+        }
+        for y in 0..<NumRows {
+            for x in 0..<NumColumns {
+                for obj in cells[x, y]!.gameObjects {
+                    if obj.flippable {
+                        var newCoords = flipAlgo(x: x, y: y)
+                        newLocations[newCoords.x, newCoords.y]!.append(obj)
                     } else {
-                        // will run into some problems if reflecting onto the hero
-                        newObstacles[x, y] = currentObstacle
+                        newLocations[x, y]!.append(obj)
                     }
                 }
             }
         }
-        obstacles = newObstacles
+        moveAll(newLocations)
+    }
+    
+    private func moveAll(newLocations: Array2D<[GameObj]>) {
+        for y in 0..<NumRows {
+            for x in 0..<NumColumns {
+                for obj in newLocations[x, y]! {
+                    moveObj(obj, x: x, y: y)
+                }
+            }
+        }
+    }
+    
+    func moveObj(obj: GameObj, x: Int, y: Int) {
+        // remove obj from parent cell and move to new cell
+        var oldx = obj.column
+        var oldy = obj.row
+        obj.column = x
+        obj.row = y
+        cells[x, y]!.addGameObj(obj)
+        cells[oldx, oldy]!.removeGameObj(obj)
+    }
+    
+    func flipUp() {
+        flip(flipUpAlgo)
     }
     
     func flipRight() {
-        println("level.flipVertical")
-        // for obstacle in obstacles, if flippable, flip over the middle line
-        // assume we have an even number of lines
-        let maxColumnIndex: Int = NumColumns - 1
-        // flip bottom half
-        var newObstacles = Array2D<GameObj>(columns: NumColumns, rows: NumRows)
-        for y in Range(start: 0, end: NumRows) {
-            for x in Range(start: 0, end: NumColumns) {
-                if var currentObstacle: GameObj = obstacles[x, y] {
-                    if currentObstacle.flippable {
-                        // flip over horizontal axis
-                        let flipx = maxColumnIndex - x
-                        // bad that we have to change both of these things
-                        currentObstacle.column = flipx
-                        currentObstacle.row = y
-                        newObstacles[flipx, y] = currentObstacle
-                    } else {
-                        // will run into some problems if reflecting onto the hero
-                        newObstacles[x, y] = currentObstacle
-                    }
-                }
-            }
-        }
-        obstacles = newObstacles
+        flip(flipRightAlgo)
     }
     
     func flipUpRight() {
-        println("level.flipUpRight")
-        let maxColumnIndex: Int = NumColumns - 1
-        let maxRowIndex: Int = NumRows - 1
-        
-        var newObstacles = Array2D<GameObj>(columns: NumColumns, rows: NumRows)
-        for y in Range(start: 0, end: NumRows) {
-            for x in Range(start: 0, end: NumColumns) {
-                if var currentObstacle: GameObj = obstacles[x, y] {
-                    if currentObstacle.flippable {
-                        let flipx = maxColumnIndex - y
-                        let flipy = maxRowIndex - x
-                        currentObstacle.column = flipx
-                        currentObstacle.row = flipy
-                        newObstacles[flipx, flipy] = currentObstacle
-                        println("(\(x), \(y)) -> (\(flipx), \(flipy))")
-                    } else {
-                        newObstacles[x, y] = currentObstacle
-                    }
-                }
-            }
-        }
-        obstacles = newObstacles
+        flip(flipUpRightAlgo)
     }
     
     func flipUpLeft() {
-        println("level.flipUpRight")
-        let maxColumnIndex: Int = NumColumns - 1
-        let maxRowIndex: Int = NumRows - 1
-        
-        var newObstacles = Array2D<GameObj>(columns: NumColumns, rows: NumRows)
-        for y in Range(start: 0, end: NumRows) {
-            for x in Range(start: 0, end: NumColumns) {
-                if var currentObstacle: GameObj = obstacles[x, y] {
-                    if currentObstacle.flippable {
-                        let flipx = y
-                        let flipy = x
-                        currentObstacle.column = flipx
-                        currentObstacle.row = flipy
-                        newObstacles[flipx, flipy] = currentObstacle
-                    } else {
-                        newObstacles[x, y] = currentObstacle
-                    }
-                }
-            }
-        }
-        obstacles = newObstacles
+        flip(flipUpLeftAlgo)
+    }
+
+    
+    func flipUpAlgo(x: Int, y:Int) -> (x: Int, y: Int) {
+        var flipx = x
+        var flipy = MaxRowIndex - y
+        return (x: flipx, y: flipy)
+    }
+    
+    func flipRightAlgo(x: Int, y: Int) -> (x: Int, y: Int) {
+        let flipx = MaxColumnIndex - x
+        let flipy = y
+        return (x: flipx, y: flipy)
+    }
+    
+    func flipUpRightAlgo(x: Int, y: Int) -> (x: Int, y: Int) {
+        let flipx = MaxColumnIndex - y
+        let flipy = MaxRowIndex - x
+        return (x: flipx, y: flipy)
+    }
+    
+    func flipUpLeftAlgo(x: Int, y: Int) -> (x: Int, y: Int) {
+        let flipx = y
+        let flipy = x
+        return (x: flipx, y: flipy)
     }
     
     func getHero() -> Hero {
@@ -169,16 +180,31 @@ class Level {
         return graph
     }
     
-    func getObstaclesSet() -> Set<GameObj> {
-        return obstaclesSet
+    func getAllObjs() -> [GameObj] {
+        var allObjs: [GameObj] = []
+        for y in Range(start: 0, end: NumRows) {
+            for x in Range(start: 0, end: NumColumns) {
+                if let curCell = cells[x, y]? {
+                    allObjs += curCell.gameObjects
+                }
+            }
+        }
+        return allObjs
     }
+//    func getObstaclesSet() -> Set<GameObj> {
+//        return obstaclesSet
+//    }
+//    
+//    func getObstacles() -> Array2D<GameObj> {
+//        return obstacles
+//    }
+//    
+//    func getStartPosition() -> (Int, Int)? {
+//        return startPosition
+//    }
     
-    func getObstacles() -> Array2D<GameObj> {
-        return obstacles
-    }
-    
-    func getStartPosition() -> (Int, Int)? {
-        return startPosition
+    func getCells() -> Array2D<Cell> {
+        return cells
     }
     
     func getDestCell() -> DestCell {
@@ -191,12 +217,9 @@ class Level {
         for y in Range(start: 0, end: NumRows) {
             for x in Range(start: 0, end: NumColumns) {
                 walkable[x, y] = 0
-                if let tile = tiles[x, y] {
-                    walkable[x, y] = 1
-                    if let obstacle = obstacles[x, y] {
-                        if !obstacle.walkable {
-                            walkable[x, y] = 0
-                        }
+                if let cell = cells[x, y]? {
+                    if cell.walkable {
+                        walkable[x, y] = 1
                     }
                 }
             }
@@ -216,12 +239,20 @@ class Level {
             [0, 0, 0, 0, 0, 0, 0, 0]]
     }
     
+    private func setupCells() {
+        for row in Range(start: 0, end: NumRows) {
+            for col in Range(start: 0, end: NumColumns) {
+                cells[col, row] = Cell(x: col, y: row)
+            }
+        }
+    }
+    
     private func setupTiles(tilesArray: AnyObject) {
         for (row, rowArray) in enumerate(tilesArray as [[Int]]) {
             let tileRow = NumRows - row - 1
             for (column, value) in enumerate(rowArray) {
                 if value == 1 {
-                    tiles[column, tileRow] = Tile()
+                    cells[column, tileRow]!.tile = Tile()
                 }
             }
         }
@@ -234,9 +265,11 @@ class Level {
             for (column, value) in enumerate(rowArray) {
                 if value == 1 {
                     println("setupObstacles: \(column), \(tileRow)")
+                    
                     let block = Block(column: column, row: tileRow)
-                    obstacles[column, tileRow] = block
-                    obstaclesSet.addElement(block) // why do we use obstaclesSet? faster lookup?
+                    cells[column, tileRow]!.addGameObj(block)
+                    // obstacles[column, tileRow] = block
+                    // obstaclesSet.addElement(block) // why do we use obstaclesSet? faster lookup?
                 }
             }
         }
@@ -253,6 +286,6 @@ class Level {
     func tileAtColumn(column: Int, row: Int) -> Tile? {
         assert(column >= 0 && column < NumColumns)
         assert(row >= 0 && row < NumRows)
-        return tiles[column, row]
+        return cells[column, row]!.tile
     }
 }
