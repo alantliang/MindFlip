@@ -49,8 +49,6 @@ class Cell {
 class Level {
     private var cells = Array2D<Cell>(columns: NumColumns, rows: NumRows)
     private var tiles = Array2D<Tile>(columns: NumColumns, rows: NumRows)
-    // private var obstacles = Array2D<GameObj>(columns: NumColumns, rows: NumRows) // might want a different data structures to access all obstacles. Make separate class? that has a list? yes
-    // private var obstaclesSet = Set<GameObj>()
     private var hero: Hero! // we always want a reference to the hero
     private var destCell: DestCell!
     private var graph: Graph! // make this calculated
@@ -83,12 +81,85 @@ class Level {
     }
     
     func moveDestCell(column: Int, row: Int) {
-        destCell.column = column
-        destCell.row = row
+        moveObj(destCell, x: column, y: row)
+    }
+    
+    func moveHero(column: Int, row: Int) {
+        moveObj(hero, x: column, y: row)
+    }
+    
+    func flipUp() {
+        flip(flipUpAlgo)
+    }
+    
+    func flipRight() {
+        flip(flipRightAlgo)
+    }
+    
+    func flipUpRight() {
+        flip(flipUpRightAlgo)
+    }
+    
+    func flipUpLeft() {
+        flip(flipUpLeftAlgo)
+    }
+    
+    func getHero() -> Hero {
+        return hero
+    }
+    
+    func getGraph() -> Graph {
+        return graph
+    }
+    
+    func getAllObjs() -> [GameObj] {
+        var allObjs: [GameObj] = []
+        for y in Range(start: 0, end: NumRows) {
+            for x in Range(start: 0, end: NumColumns) {
+                if let curCell = cells[x, y]? {
+                    allObjs += curCell.gameObjects
+                }
+            }
+        }
+        return allObjs
+    }
+    
+    func getCells() -> Array2D<Cell> {
+        return cells
+    }
+    
+    func getDestCell() -> DestCell {
+        return destCell
+    }
+    
+    func getWalkable() -> Array2D<Int> {
+        // assuming height and width are same for both
+        var walkable = Array2D<Int>(columns: NumColumns, rows: NumRows)
+        for y in Range(start: 0, end: NumRows) {
+            for x in Range(start: 0, end: NumColumns) {
+                walkable[x, y] = 0
+                if let cell = cells[x, y]? {
+                    if cell.walkable {
+                        walkable[x, y] = 1
+                    }
+                }
+            }
+        }
+        return walkable
+    }
+    
+    func resetGraph() {
+        setupGraph(getWalkable())
+    }
+    
+    func tileAtColumn(column: Int, row: Int) -> Tile? {
+        assert(column >= 0 && column < NumColumns)
+        assert(row >= 0 && row < NumRows)
+        return cells[column, row]!.tile
     }
 
-    func flip(flipAlgo: (x: Int, y: Int) -> (x: Int, y: Int)) {
-        println("level.flipHorizontal")
+
+    private func flip(flipAlgo: (x: Int, y: Int) -> (x: Int, y: Int)) {
         // for obstacle in obstacles, if flippable, flip using flip algorithm
         var newLocations = Array2D<[GameObj]>(columns: NumColumns, rows: NumRows)
         for y in 0..<NumRows {
@@ -121,7 +192,7 @@ class Level {
         }
     }
     
-    func moveObj(obj: GameObj, x: Int, y: Int) {
+    private func moveObj(obj: GameObj, x: Int, y: Int) {
         // remove obj from parent cell and move to new cell
         var oldx = obj.column
         var oldy = obj.row
@@ -131,112 +202,28 @@ class Level {
         cells[oldx, oldy]!.removeGameObj(obj)
     }
     
-    func flipUp() {
-        flip(flipUpAlgo)
-    }
-    
-    func flipRight() {
-        flip(flipRightAlgo)
-    }
-    
-    func flipUpRight() {
-        flip(flipUpRightAlgo)
-    }
-    
-    func flipUpLeft() {
-        flip(flipUpLeftAlgo)
-    }
-
-    
-    func flipUpAlgo(x: Int, y:Int) -> (x: Int, y: Int) {
+    private func flipUpAlgo(x: Int, y:Int) -> (x: Int, y: Int) {
         var flipx = x
         var flipy = MaxRowIndex - y
         return (x: flipx, y: flipy)
     }
     
-    func flipRightAlgo(x: Int, y: Int) -> (x: Int, y: Int) {
+    private func flipRightAlgo(x: Int, y: Int) -> (x: Int, y: Int) {
         let flipx = MaxColumnIndex - x
         let flipy = y
         return (x: flipx, y: flipy)
     }
     
-    func flipUpRightAlgo(x: Int, y: Int) -> (x: Int, y: Int) {
+    private func flipUpRightAlgo(x: Int, y: Int) -> (x: Int, y: Int) {
         let flipx = MaxColumnIndex - y
         let flipy = MaxRowIndex - x
         return (x: flipx, y: flipy)
     }
     
-    func flipUpLeftAlgo(x: Int, y: Int) -> (x: Int, y: Int) {
+    private func flipUpLeftAlgo(x: Int, y: Int) -> (x: Int, y: Int) {
         let flipx = y
         let flipy = x
         return (x: flipx, y: flipy)
-    }
-    
-    func getHero() -> Hero {
-        return hero
-    }
-    
-    func getGraph() -> Graph {
-        return graph
-    }
-    
-    func getAllObjs() -> [GameObj] {
-        var allObjs: [GameObj] = []
-        for y in Range(start: 0, end: NumRows) {
-            for x in Range(start: 0, end: NumColumns) {
-                if let curCell = cells[x, y]? {
-                    allObjs += curCell.gameObjects
-                }
-            }
-        }
-        return allObjs
-    }
-//    func getObstaclesSet() -> Set<GameObj> {
-//        return obstaclesSet
-//    }
-//    
-//    func getObstacles() -> Array2D<GameObj> {
-//        return obstacles
-//    }
-//    
-//    func getStartPosition() -> (Int, Int)? {
-//        return startPosition
-//    }
-    
-    func getCells() -> Array2D<Cell> {
-        return cells
-    }
-    
-    func getDestCell() -> DestCell {
-        return destCell
-    }
-    
-    func getWalkable() -> Array2D<Int> {
-        // assuming height and width are same for both
-        var walkable = Array2D<Int>(columns: NumColumns, rows: NumRows)
-        for y in Range(start: 0, end: NumRows) {
-            for x in Range(start: 0, end: NumColumns) {
-                walkable[x, y] = 0
-                if let cell = cells[x, y]? {
-                    if cell.walkable {
-                        walkable[x, y] = 1
-                    }
-                }
-            }
-        }
-        return walkable
-    }
-    
-    private func emptyMatrix(rows: Int, columns: Int) -> [[Int]] {
-        // TODO(liang): currently returns 8 by 8. Learn how to intialize arrays in swift!
-        return [[0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0]]
     }
     
     private func setupCells() {
@@ -265,11 +252,8 @@ class Level {
             for (column, value) in enumerate(rowArray) {
                 if value == 1 {
                     println("setupObstacles: \(column), \(tileRow)")
-                    
                     let block = Block(column: column, row: tileRow)
                     cells[column, tileRow]!.addGameObj(block)
-                    // obstacles[column, tileRow] = block
-                    // obstaclesSet.addElement(block) // why do we use obstaclesSet? faster lookup?
                 }
             }
         }
@@ -277,15 +261,5 @@ class Level {
     
     private func setupGraph(walkable: Array2D<Int>) {
         graph = Graph(walkable: walkable)
-    }
-    
-    func resetGraph() {
-        setupGraph(getWalkable())
-    }
-    
-    func tileAtColumn(column: Int, row: Int) -> Tile? {
-        assert(column >= 0 && column < NumColumns)
-        assert(row >= 0 && row < NumRows)
-        return cells[column, row]!.tile
     }
 }

@@ -145,8 +145,7 @@ class GameScene: SKScene {
             prevColumn = node.x
             prevRow = node.y
         }
-        hero.column = goal.0
-        hero.row = goal.1
+        level.moveHero(goal.0, row: goal.1)
         hero.sprite?.runAction(SKAction.sequence(actions), completion: {
             self.userInteractionEnabled = true
             println("Set userInteractionEnabled to true")})
