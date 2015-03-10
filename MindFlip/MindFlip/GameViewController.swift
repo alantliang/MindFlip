@@ -30,6 +30,10 @@ class GameViewController: UIViewController {
         return Int(UIInterfaceOrientationMask.AllButUpsideDown.rawValue)
     }
     
+    @IBAction func printReset() {
+        println("Reset pressed")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         println("GameViewController loaded")

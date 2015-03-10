@@ -18,17 +18,23 @@
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8kX-mW-ScL">
                                 <rect key="frame" x="277" y="479" width="46" height="30"/>
+                                <color key="backgroundColor" red="0.2156862745" green="0.50196078430000002" blue="0.72941176470000002" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="46" id="jrq-lL-AIF"/>
                                 </constraints>
+                                <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="15"/>
                                 <state key="normal" title="Reset">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                                 </state>
+                                <connections>
+                                    <action selector="printReset" destination="LVB-YS-i5n" eventType="touchUpInside" id="4HQ-ps-ZBG"/>
+                                </connections>
                             </button>
                         </subviews>
                         <constraints>
                             <constraint firstItem="8kX-mW-ScL" firstAttribute="centerX" secondItem="bdc-N1-crn" secondAttribute="centerX" id="DBy-G2-or6"/>
                             <constraint firstItem="b3d-qh-BLL" firstAttribute="top" secondItem="8kX-mW-ScL" secondAttribute="bottom" constant="91" id="XPr-aM-gSB"/>
+                            <constraint firstAttribute="centerX" secondItem="8kX-mW-ScL" secondAttribute="centerX" id="k60-gY-PEF"/>
                         </constraints>
                     </view>
                     <connections>
