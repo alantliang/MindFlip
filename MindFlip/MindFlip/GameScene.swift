@@ -18,6 +18,9 @@ class GameScene: SKScene {
     let tilesLayer = SKNode()
     let playerLayer = SKNode()
     
+    var wayPoints: [CGPoint] = []
+    var velocity = CGPoint(x: 0, y: 0)
+    
     let randomSounds = ["Ryu_Shinkuu_Tatsumaki_Sound_Effect.mp3",
         "Ryu_Hadouken_Sound_Effect.mp3",
         "Ryu_Shoryuken_Sound_Effect.mp3",
@@ -54,6 +57,90 @@ class GameScene: SKScene {
         // currently add destCell here. Think of a better way
         addSpriteForDestCell()
     }
+    
+    override func touchesCancelled(touches: NSSet, withEvent event: UIEvent) {
+        touchesEnded(touches, withEvent: event)
+    }
+    
+    override func touchesMoved(touches: NSSet, withEvent event: UIEvent) {
+        let location = touches.anyObject()!.locationInNode(scene)
+        addMovingPoint(location)
+        drawLines()
+    }
+    
+    override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
+        let touch = touches.anyObject() as UITouch
+        let location = touch.locationInNode(tilesLayer)
+        println("Touched: \(location.x), \(location.y)")
+        initialPoint = location
+        let (success, column, row) = convertPoint(location)
+        if success {
+            // Later can handle if initial touch is not in tilesLayer
+            initialCell = (column, row)
+        }
+    }
+    
+    override func touchesEnded(touches: NSSet, withEvent event: UIEvent) {
+        let touch = touches.anyObject() as UITouch
+        let location = touch.locationInNode(tilesLayer)
+        endPoint = location
+        let (success, column, row) = convertPoint(location)
+        if success {
+            endCell = (column, row)
+            if isSwipe() {
+                flip()
+            } else if isMove(column, row: row) {
+                if level.isWalkable(column, row: row) && isAStar() {
+                    self.userInteractionEnabled = false
+                    moveDest(column, row: row)
+                    moveHero(column, row: row)
+                }
+            }
+        }
+        removeLines()
+    }
+    
+    
+    func createPathToMove() -> CGPathRef? {
+        if wayPoints.count <= 1 {
+            return nil
+        }
+        var ref = CGPathCreateMutable()
+        for var i = 0; i < wayPoints.count; ++i {
+            let p = wayPoints[i]
+            if i == 0 {
+                CGPathMoveToPoint(ref, nil, p.x, p.y)
+            } else {
+                CGPathAddLineToPoint(ref, nil, p.x, p.y)
+            }
+        }
+        return ref
+    }
+    
+    func drawLines() {
+        // from http://www.raywenderlich.com/80586/make-line-drawing-game-sprite-kit-swift
+        enumerateChildNodesWithName("line", usingBlock: {node, stop in node.removeFromParent()})
+        let path = self.createPathToMove()
+        let shapeNode = SKShapeNode()
+        shapeNode.path = path
+        shapeNode.name = "line"
+        shapeNode.strokeColor = UIColor.greenColor()
+        shapeNode.lineWidth = 3
+        shapeNode.zPosition = 999
+        
+        self.addChild(shapeNode)
+    }
+    
+    func removeLines() {
+        enumerateChildNodesWithName("line", usingBlock: {node, stop in node.removeFromParent()})
+        wayPoints = []
+    }
+    
+    func addMovingPoint(point: CGPoint) {
+        wayPoints.append(point)
+    }
+    
+
     
     func pointForColumn(column: Int, row: Int) -> CGPoint {
         return CGPoint(
@@ -206,37 +293,7 @@ class GameScene: SKScene {
         return SKAction.repeatAction(currentAnim!, count: 1)
     }
     
-    override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
-        let touch = touches.anyObject() as UITouch
-        let location = touch.locationInNode(tilesLayer)
-        println("Touched: \(location.x), \(location.y)")
-        initialPoint = location
-        let (success, column, row) = convertPoint(location)
-        if success {
-            // Later can handle if initial touch is not in tilesLayer
-            initialCell = (column, row)
-        }
-    }
-    
-    override func touchesEnded(touches: NSSet, withEvent event: UIEvent) {
-        let touch = touches.anyObject() as UITouch
-        let location = touch.locationInNode(tilesLayer)
-        endPoint = location
-        let (success, column, row) = convertPoint(location)
-        if success {
-            endCell = (column, row)
-            if isSwipe() {
-                flip()
-            } else if isMove(column, row: row) {
-                if level.isWalkable(column, row: row) && isAStar() {
-                    self.userInteractionEnabled = false
-                    println("Set userInteractionEnabled to false")
-                    moveDest(column, row: row)
-                    moveHero(column, row: row)
-                }
-            }
-        }
-    }
+
     
     func moveDest(column: Int, row: Int) {
         level.moveDestCell(column, row: row)
@@ -374,7 +431,5 @@ class GameScene: SKScene {
     }
 
     
-    override func touchesCancelled(touches: NSSet, withEvent event: UIEvent) {
-        touchesEnded(touches, withEvent: event)
-    }
+
 }

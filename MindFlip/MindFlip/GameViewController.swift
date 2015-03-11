@@ -30,14 +30,7 @@ class GameViewController: UIViewController {
         return Int(UIInterfaceOrientationMask.AllButUpsideDown.rawValue)
     }
     
-    @IBAction func printReset() {
-        println("Reset pressed")
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        println("GameViewController loaded")
-        
+    private func beginGame() {
         // Configure the view.
         let skView = view as SKView
         skView.multipleTouchEnabled = false
@@ -53,5 +46,16 @@ class GameViewController: UIViewController {
         scene.addSpritesForObstacles()
         skView.presentScene(scene)
         backgroundMusic.play()
+    }
+    
+    @IBAction func printReset() {
+        println("Reset pressed")
+        beginGame()
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        println("GameViewController loaded")
+        beginGame()
     }
 }
