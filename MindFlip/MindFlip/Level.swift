@@ -254,6 +254,10 @@ class Level {
                     println("setupObstacles: \(column), \(tileRow)")
                     let block = Block(column: column, row: tileRow)
                     cells[column, tileRow]!.addGameObj(block)
+                } else if value == 3 {
+                    println("setupObstacles: \(column), \(tileRow)")
+                    let collectable = Collectable(column: column, row: tileRow)
+                    cells[column, tileRow]!.addGameObj(collectable)
                 }
             }
         }

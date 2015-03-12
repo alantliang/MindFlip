@@ -9,9 +9,9 @@
 import SpriteKit
 
 enum ObstacleType: Int, Printable {
-    case Unknown = 0, Hero, Block, DestCell
+    case Unknown = 0, Hero, Block, DestCell, Collectable
     var spriteName: String {
-        let spriteNames = ["hero_front_00", "block", "selected_cell"]
+        let spriteNames = ["hero_front_00", "block", "selected_cell", "collectable"]
         
         return spriteNames[rawValue - 1]
     }
@@ -74,5 +74,11 @@ class DestCell: GameObj {
         super.init(column: column, row: row, obstacleType: ObstacleType.DestCell)
         self.walkable = true
         self.flippable = false
+    }
+}
+
+class Collectable: GameObj {
+    init(column: Int, row: Int) {
+        super.init(column: column, row: row, obstacleType: ObstacleType.Collectable)
     }
 }
