@@ -3,7 +3,7 @@
 
 import SpriteKit
 
-class GameScene: SKScene {
+class GameScene: SKScene, SKPhysicsContactDelegate {
     var level: Level!
     
     var initialCell: (Int, Int)?
@@ -56,6 +56,8 @@ class GameScene: SKScene {
         println("Moved to gamescene view")
         // currently add destCell here. Think of a better way
         addSpriteForDestCell()
+        physicsWorld.gravity = CGVectorMake(0, 0)
+        physicsWorld.contactDelegate = self
     }
     
     override func touchesCancelled(touches: NSSet, withEvent event: UIEvent) {
@@ -100,6 +102,27 @@ class GameScene: SKScene {
         removeLines()
     }
     
+    func heroCollideCollectable(hero: SKSpriteNode, collectable: SKSpriteNode) {
+        println("GOT THE COLLECTABLE")
+        collectable.removeFromParent()
+    }
+    
+    func didBeginContact(contact: SKPhysicsContact) {
+        var firstBody: SKPhysicsBody
+        var secondBody: SKPhysicsBody
+        if contact.bodyA.categoryBitMask < contact.bodyB.categoryBitMask {
+            firstBody = contact.bodyA
+            secondBody = contact.bodyB
+        } else {
+            firstBody = contact.bodyB
+            secondBody = contact.bodyA
+        }
+        
+        if ((firstBody.categoryBitMask & PhysicsCategory.Hero != 0) &&
+            (secondBody.categoryBitMask & PhysicsCategory.Collectable != 0)) {
+                heroCollideCollectable(firstBody.node as SKSpriteNode, collectable: secondBody.node as SKSpriteNode)
+        }
+    }
     
     func createPathToMove() -> CGPathRef? {
         if wayPoints.count <= 1 {
@@ -185,6 +208,7 @@ class GameScene: SKScene {
             sprite.zPosition = 100
             playerLayer.addChild(sprite)
             obstacle.sprite = sprite
+            obstacle.setSpriteCollision()
         }
     }
     

@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MindFlip/GameScene.swift"
-            timestampString = "447730794.96678"
+            timestampString = "447907988.949442"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "254"
-            endingLineNumber = "254"
+            startingLineNumber = "278"
+            endingLineNumber = "278"
             landmarkName = "getWalk(_:end:)"
             landmarkType = "5">
          </BreakpointContent>
@@ -74,11 +74,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MindFlip/GameScene.swift"
-            timestampString = "447730794.96678"
+            timestampString = "447907988.949442"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "173"
-            endingLineNumber = "173"
+            startingLineNumber = "196"
+            endingLineNumber = "196"
             landmarkName = "addSpritesForObstacles()"
             landmarkType = "5">
          </BreakpointContent>
@@ -90,11 +90,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MindFlip/GameScene.swift"
-            timestampString = "447730794.96678"
+            timestampString = "447907988.949442"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "206"
-            endingLineNumber = "206"
+            startingLineNumber = "230"
+            endingLineNumber = "230"
             landmarkName = "moveHero(_:row:)"
             landmarkType = "5">
          </BreakpointContent>
@@ -186,11 +186,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MindFlip/GameScene.swift"
-            timestampString = "447730794.96678"
+            timestampString = "447907988.949442"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "366"
-            endingLineNumber = "366"
+            startingLineNumber = "390"
+            endingLineNumber = "390"
             landmarkName = "flipRight()"
             landmarkType = "5">
          </BreakpointContent>
@@ -266,11 +266,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MindFlip/GameScene.swift"
-            timestampString = "447730794.96678"
+            timestampString = "447907988.949442"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "235"
-            endingLineNumber = "235"
+            startingLineNumber = "259"
+            endingLineNumber = "259"
             landmarkName = "moveHero(_:row:)"
             landmarkType = "5">
          </BreakpointContent>
